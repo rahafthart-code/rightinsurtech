@@ -86,7 +86,7 @@ function TrustBar() {
   return (
     <section className="border-y border-border bg-bg-secondary py-8">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-6 text-sm text-text-tertiary">
-        <span className="font-mono">SAMA</span>
+        <span>هيئة التأمين — البيئة التجريبية</span>
         <span>·</span>
         <span>الاتحاد السعودي للفروسية</span>
         <span>·</span>
