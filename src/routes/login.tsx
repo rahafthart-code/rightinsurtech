@@ -5,7 +5,7 @@ import { ArrowLeft, ShieldCheck } from "lucide-react";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({ meta: [{ title: "دخول — رايت" }] }),
+  head: () => ({ meta: [{ title: "دخول — Right" }] }),
 });
 
 function LoginPage() {
@@ -22,7 +22,7 @@ function LoginPage() {
     setErr(""); setLoading(true);
     // TODO: call OTP send server fn (Lovable Cloud) — UI flow only for now
     await new Promise((r) => setTimeout(r, 600));
-    sessionStorage.setItem("rayet_phone", `+966${phone}`);
+    sessionStorage.setItem("right_phone", `+966${phone}`);
     navigate({ to: "/verify" });
   };
 
@@ -32,8 +32,8 @@ function LoginPage() {
         {/* Form side */}
         <div className="flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md">
-            <Link to="/" className="inline-flex items-center gap-2"><img src={logo} alt="رايت" className="h-7" /></Link>
-            <h1 className="mt-10 text-3xl font-black text-foreground">أهلاً بك في رايت</h1>
+            <Link to="/" className="inline-flex items-center gap-2"><img src={logo} alt="Right" className="h-7" /></Link>
+            <h1 className="mt-10 text-3xl font-black text-foreground">أهلاً بك في Right</h1>
             <p className="mt-2 text-sm text-text-secondary">سجّل برقم جوالك — سنرسل لك رمز تحقق فوري.</p>
 
             <form onSubmit={submit} className="mt-8 space-y-4">
@@ -70,7 +70,7 @@ function LoginPage() {
 
             <div className="mt-10 flex items-center justify-center gap-2 text-xs text-text-tertiary">
               <ShieldCheck className="h-4 w-4 text-teal" />
-              <span>تشفير بنكي · مرخّص من البنك المركزي السعودي</span>
+              <span>تشفير بنكي · ضمن البيئة التنظيمية التجريبية لهيئة التأمين</span>
             </div>
           </div>
         </div>
@@ -79,10 +79,10 @@ function LoginPage() {
         <div className="relative hidden overflow-hidden bg-gradient-dark lg:block">
           <div className="absolute inset-0 bg-gradient-hero opacity-30" />
           <div className="relative flex h-full flex-col justify-between p-12 text-white">
-            <div className="font-mono text-sm tracking-widest text-gold">RAYET · رايت</div>
+            <div className="font-mono text-sm tracking-widest text-gold">Right · Right</div>
             <div>
               <div className="text-3xl font-black leading-snug">
-                "وثقت 14 خيلاً عندي في رايت — السجل ساعدني أبيع مهرين بسعر أعلى من السوق."
+                "وثقت 14 خيلاً عندي في Right — السجل ساعدني أبيع مهرين بسعر أعلى من السوق."
               </div>
               <div className="mt-6 text-sm text-white/70">— أبو فيصل · مربّي خيل عربي · القصيم</div>
             </div>

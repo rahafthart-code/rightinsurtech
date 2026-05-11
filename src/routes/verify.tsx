@@ -4,7 +4,7 @@ import logo from "@/assets/right-logo.png";
 
 export const Route = createFileRoute("/verify")({
   component: VerifyPage,
-  head: () => ({ meta: [{ title: "تحقق — رايت" }] }),
+  head: () => ({ meta: [{ title: "تحقق — Right" }] }),
 });
 
 const LEN = 6;
@@ -19,7 +19,7 @@ function VerifyPage() {
   const refs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
-    const p = sessionStorage.getItem("rayet_phone");
+    const p = sessionStorage.getItem("right_phone");
     if (!p) navigate({ to: "/login" });
     else setPhone(p);
   }, [navigate]);
@@ -66,14 +66,14 @@ function VerifyPage() {
       setLoading(false);
       return;
     }
-    sessionStorage.setItem("rayet_session", "1");
+    sessionStorage.setItem("right_session", "1");
     navigate({ to: "/" });
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg-secondary px-6 py-12">
       <div className="w-full max-w-md rounded-3xl border border-border bg-surface p-8 shadow-premium">
-        <Link to="/login"><img src={logo} alt="رايت" className="h-7" /></Link>
+        <Link to="/login"><img src={logo} alt="Right" className="h-7" /></Link>
 
         <h1 className="mt-8 text-2xl font-black text-foreground">أدخل رمز التحقق</h1>
         <p className="mt-2 text-sm text-text-secondary">

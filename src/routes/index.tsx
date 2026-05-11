@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
   component: HomePage,
   head: () => ({
     meta: [
-      { title: "رايت — تأمين وحماية الخيل والإبل والصقور" },
+      { title: "Right — تأمين وحماية الخيل والإبل والصقور" },
       { name: "description", content: "أول منصة سعودية لتأمين الأصول التراثية الثمينة. مراقبة لحظية، تنبيهات صحية بـ AI، ودفع فوري عبر Apple Pay." },
     ],
   }),
@@ -37,7 +37,7 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-text-secondary shadow-premium">
             <span className="h-1.5 w-1.5 rounded-full bg-teal" />
-            مرخّص من البنك المركزي السعودي · ساما
+            ضمن البيئة التنظيمية التجريبية لهيئة التأمين
           </div>
           <h1 className="mt-6 text-4xl font-black leading-[1.15] text-foreground md:text-6xl">
             أصولك التراثية تستحق
@@ -46,7 +46,7 @@ function Hero() {
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-text-secondary md:text-xl">
-            رايت هي أول منصة رقمية في المملكة لتأمين الخيل والإبل والصقور — مراقبة صحية لحظية، تنبيهات ذكية، وتغطية فورية.
+            Right هي أول منصة رقمية في المملكة لتأمين الخيل والإبل والصقور — مراقبة صحية لحظية، تنبيهات ذكية، وتغطية فورية.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link to="/login" className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold px-7 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 sm:w-auto">
@@ -86,7 +86,7 @@ function TrustBar() {
   return (
     <section className="border-y border-border bg-bg-secondary py-8">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-12 gap-y-4 px-6 text-sm text-text-tertiary">
-        <span className="font-mono">SAMA</span>
+        <span>هيئة التأمين — البيئة التجريبية</span>
         <span>·</span>
         <span>الاتحاد السعودي للفروسية</span>
         <span>·</span>
@@ -102,7 +102,7 @@ function Features() {
   const items = [
     { icon: Shield, title: "تغطية شاملة", desc: "ضد المرض، الإصابة، النفوق، والسرقة. تعويض حتى 1.5 مليون ريال للأصل الواحد." },
     { icon: Activity, title: "مراقبة لحظية", desc: "حساس ذكي يربط الصحة بالحركة والنبض، يُحلَّل بـ AI ويُرسَل لك في الوقت المناسب." },
-    { icon: Sparkles, title: "تنبؤ ذكي", desc: "نموذج رايت AI يكتشف المؤشرات المبكرة قبل أيام من ظهور الأعراض." },
+    { icon: Sparkles, title: "تنبؤ ذكي", desc: "نموذج Right AI يكتشف المؤشرات المبكرة قبل أيام من ظهور الأعراض." },
     { icon: FileCheck, title: "سجل رقمي موثّق", desc: "كل فحص وعلاج مسجّل ومؤرشف — يرفع قيمة أصلك في السوق الثانوي." },
     { icon: Phone, title: "بيطري عند الطلب", desc: "تواصل مباشر مع شبكة بيطريين معتمدين خلال دقائق، 24/7." },
     { icon: Zap, title: "مطالبات في 48 ساعة", desc: "صرف التعويض بدون أوراق — كل شيء داخل التطبيق." },
@@ -163,7 +163,7 @@ function SocialProof() {
     <section className="py-24">
       <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-3">
         {[
-          { q: "وثقت 14 خيلاً عندي في رايت — السجل ساعدني أبيع مهرين بسعر أعلى من السوق.", a: "أبو فيصل", r: "مربّي خيل عربي · القصيم" },
+          { q: "وثقت 14 خيلاً عندي في Right — السجل ساعدني أبيع مهرين بسعر أعلى من السوق.", a: "أبو فيصل", r: "مربّي خيل عربي · القصيم" },
           { q: "التنبيه وصلني قبل ما البيطري يكتشف الالتهاب بثلاثة أيام. الناقة تستاهل كل ريال.", a: "م. خالد", r: "مالك إبل وضح · الرياض" },
           { q: "لأول مرة أحس إن في جهة فاهمة قيمة الصقر. التعويض وصل خلال يومين.", a: "سعد الـ.", r: "صقّار · حائل" },
         ].map((t) => (
@@ -186,7 +186,7 @@ function FinalCTA() {
     <section className="px-6 pb-24">
       <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl bg-gradient-dark p-12 text-center md:p-16">
         <h2 className="text-3xl font-black text-white md:text-5xl">احمِ ما لا يُعوّض</h2>
-        <p className="mx-auto mt-4 max-w-xl text-base text-white/70 md:text-lg">انضم لمئات الملاك الذين يثقون برايت في حماية أغلى ما يملكون.</p>
+        <p className="mx-auto mt-4 max-w-xl text-base text-white/70 md:text-lg">انضم لمئات الملاك الذين يثقون بRight في حماية أغلى ما يملكون.</p>
         <Link to="/login" className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-gold px-8 py-4 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95">
           ابدأ الآن — أول 14 يوم مجاناً
           <ArrowLeft className="h-4 w-4" />

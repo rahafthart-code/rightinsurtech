@@ -6,7 +6,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="رايت" className="h-7 w-auto" />
+          <img src={logo} alt="Right" className="h-7 w-auto" />
         </Link>
         <nav className="hidden items-center gap-8 text-sm md:flex">
           <Link to="/" className="text-text-secondary transition hover:text-foreground" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground" }}>الرئيسية</Link>
