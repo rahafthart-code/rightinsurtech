@@ -118,7 +118,7 @@ function VerifyPage() {
             {seconds > 0 ? (
               <span>إعادة الإرسال خلال <span className="font-mono text-foreground">{seconds}</span> ثانية</span>
             ) : (
-              <button type="button" onClick={() => setSeconds(45)} className="font-bold text-gold hover:underline">إعادة إرسال الرمز</button>
+              <button type="button" onClick={resend} className="font-bold text-gold hover:underline">إعادة إرسال الرمز</button>
             )}
           </div>
         </form>
