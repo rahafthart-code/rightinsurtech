@@ -8,7 +8,7 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
   head: () => ({
     meta: [
-      { title: "الأسعار — رايت" },
+      { title: "الأسعار — Right" },
       { name: "description", content: "ثلاث باقات لحماية أصلك: حارس، راعي، وأمير. ابتداءً من 490 ريال شهرياً للحيوان الواحد." },
     ],
   }),
@@ -116,7 +116,7 @@ function PricingPage() {
           </div>
 
           <div className="mx-auto mt-12 max-w-3xl rounded-2xl border border-border bg-bg-secondary p-6 text-center text-sm text-text-secondary">
-            جميع الباقات تشمل: تطبيق iOS و Android · دعم عربي 24/7 · ترخيص ساما الكامل · بدون رسوم خفية.
+            جميع الباقات تشمل: تطبيق iOS و Android · دعم عربي 24/7 · ضمن البيئة التنظيمية التجريبية لهيئة التأمين · بدون رسوم خفية.
           </div>
         </section>
 

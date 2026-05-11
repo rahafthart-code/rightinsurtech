@@ -72,10 +72,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "رايت — تأمين وحماية أصولك الثمينة" },
-      { name: "description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — بترخيص ساما." },
+      { title: "Right — تأمين وحماية أصولك الثمينة" },
+      { name: "description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
       { name: "author", content: "Rayet" },
-      { property: "og:title", content: "رايت — تأمين أصولك الثمينة" },
+      { property: "og:title", content: "Right — تأمين أصولك الثمينة" },
       { property: "og:description", content: "حماية متكاملة لخيلك، إبلك، وصقورك. اشترك في 60 ثانية." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
