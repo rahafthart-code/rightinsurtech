@@ -14,7 +14,226 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      assets: {
+        Row: {
+          birth_date: string | null
+          breed: string | null
+          created_at: string
+          estimated_value: number
+          gender: Database["public"]["Enums"]["asset_gender"] | null
+          id: string
+          image_url: string | null
+          microchip_id: string | null
+          name: string
+          notes: string | null
+          owner_id: string
+          type: Database["public"]["Enums"]["asset_type"]
+          updated_at: string
+        }
+        Insert: {
+          birth_date?: string | null
+          breed?: string | null
+          created_at?: string
+          estimated_value?: number
+          gender?: Database["public"]["Enums"]["asset_gender"] | null
+          id?: string
+          image_url?: string | null
+          microchip_id?: string | null
+          name: string
+          notes?: string | null
+          owner_id: string
+          type: Database["public"]["Enums"]["asset_type"]
+          updated_at?: string
+        }
+        Update: {
+          birth_date?: string | null
+          breed?: string | null
+          created_at?: string
+          estimated_value?: number
+          gender?: Database["public"]["Enums"]["asset_gender"] | null
+          id?: string
+          image_url?: string | null
+          microchip_id?: string | null
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          type?: Database["public"]["Enums"]["asset_type"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      claims: {
+        Row: {
+          amount_approved: number | null
+          amount_requested: number | null
+          asset_id: string
+          created_at: string
+          description: string | null
+          id: string
+          owner_id: string
+          policy_id: string
+          reason: string
+          status: Database["public"]["Enums"]["claim_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount_approved?: number | null
+          amount_requested?: number | null
+          asset_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id: string
+          policy_id: string
+          reason: string
+          status?: Database["public"]["Enums"]["claim_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount_approved?: number | null
+          amount_requested?: number | null
+          asset_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          owner_id?: string
+          policy_id?: string
+          reason?: string
+          status?: Database["public"]["Enums"]["claim_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "claims_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "claims_policy_id_fkey"
+            columns: ["policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      policies: {
+        Row: {
+          asset_id: string
+          coverage_amount: number
+          created_at: string
+          end_date: string | null
+          id: string
+          monthly_price: number
+          owner_id: string
+          plan: Database["public"]["Enums"]["policy_plan"]
+          start_date: string
+          status: Database["public"]["Enums"]["policy_status"]
+        }
+        Insert: {
+          asset_id: string
+          coverage_amount: number
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          monthly_price: number
+          owner_id: string
+          plan: Database["public"]["Enums"]["policy_plan"]
+          start_date?: string
+          status?: Database["public"]["Enums"]["policy_status"]
+        }
+        Update: {
+          asset_id?: string
+          coverage_amount?: number
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          monthly_price?: number
+          owner_id?: string
+          plan?: Database["public"]["Enums"]["policy_plan"]
+          start_date?: string
+          status?: Database["public"]["Enums"]["policy_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "policies_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vitals: {
+        Row: {
+          asset_id: string
+          heart_rate: number | null
+          id: number
+          lat: number | null
+          lng: number | null
+          owner_id: string
+          recorded_at: string
+          temperature: number | null
+        }
+        Insert: {
+          asset_id: string
+          heart_rate?: number | null
+          id?: number
+          lat?: number | null
+          lng?: number | null
+          owner_id: string
+          recorded_at?: string
+          temperature?: number | null
+        }
+        Update: {
+          asset_id?: string
+          heart_rate?: number | null
+          id?: number
+          lat?: number | null
+          lng?: number | null
+          owner_id?: string
+          recorded_at?: string
+          temperature?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vitals_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +242,11 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      asset_gender: "male" | "female"
+      asset_type: "horse" | "camel" | "falcon"
+      claim_status: "submitted" | "reviewing" | "approved" | "rejected" | "paid"
+      policy_plan: "hares" | "raee" | "amir"
+      policy_status: "active" | "pending" | "expired" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +373,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_gender: ["male", "female"],
+      asset_type: ["horse", "camel", "falcon"],
+      claim_status: ["submitted", "reviewing", "approved", "rejected", "paid"],
+      policy_plan: ["hares", "raee", "amir"],
+      policy_status: ["active", "pending", "expired", "cancelled"],
+    },
   },
 } as const
