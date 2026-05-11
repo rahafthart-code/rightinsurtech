@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/right-logo.png";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/verify")({
   component: VerifyPage,
@@ -59,15 +60,20 @@ function VerifyPage() {
     e.preventDefault();
     if (!ready) return;
     setLoading(true); setErr("");
-    await new Promise((r) => setTimeout(r, 600));
-    // TODO: verify OTP via server function (Lovable Cloud)
-    if (code === "000000") {
-      setErr("الرمز غير صحيح. حاول مرة أخرى.");
-      setLoading(false);
+    const { error } = await supabase.auth.verifyOtp({ phone, token: code, type: "sms" });
+    setLoading(false);
+    if (error) {
+      setErr("الرمز غير صحيح أو انتهت صلاحيته. حاول مرة أخرى.");
       return;
     }
-    sessionStorage.setItem("right_session", "1");
-    navigate({ to: "/" });
+    sessionStorage.removeItem("right_phone");
+    navigate({ to: "/dashboard" });
+  };
+
+  const resend = async () => {
+    if (!phone) return;
+    setSeconds(45);
+    await supabase.auth.signInWithOtp({ phone });
   };
 
   return (
@@ -112,7 +118,7 @@ function VerifyPage() {
             {seconds > 0 ? (
               <span>إعادة الإرسال خلال <span className="font-mono text-foreground">{seconds}</span> ثانية</span>
             ) : (
-              <button type="button" onClick={() => setSeconds(45)} className="font-bold text-gold hover:underline">إعادة إرسال الرمز</button>
+              <button type="button" onClick={resend} className="font-bold text-gold hover:underline">إعادة إرسال الرمز</button>
             )}
           </div>
         </form>

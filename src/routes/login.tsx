@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import logo from "@/assets/right-logo.png";
 import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -20,9 +21,16 @@ function LoginPage() {
     e.preventDefault();
     if (!valid) { setErr("الرجاء إدخال رقم جوال سعودي صحيح يبدأ بـ 5"); return; }
     setErr(""); setLoading(true);
-    // TODO: call OTP send server fn (Lovable Cloud) — UI flow only for now
-    await new Promise((r) => setTimeout(r, 600));
-    sessionStorage.setItem("right_phone", `+966${phone}`);
+    const fullPhone = `+966${phone}`;
+    const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
+    setLoading(false);
+    if (error) {
+      setErr(error.message.includes("provider") || error.message.includes("SMS")
+        ? "خدمة الرسائل غير مفعّلة بعد على الحساب. يرجى تفعيل مزود SMS من إعدادات Cloud."
+        : error.message);
+      return;
+    }
+    sessionStorage.setItem("right_phone", fullPhone);
     navigate({ to: "/verify" });
   };
 
