@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import logo from "@/assets/right-logo.png";
-import { LogOut, Plus, Activity, MapPin, Heart, Thermometer, Crown, Bird } from "lucide-react";
+import { LogOut, Plus, Activity, MapPin, Heart, Thermometer, Crown, Bird, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/dashboard")({
