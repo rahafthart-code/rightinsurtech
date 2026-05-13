@@ -15,6 +15,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiReadinessRouteImport } from './routes/api/readiness'
+import { Route as ApiHealthRouteImport } from './routes/api/health'
 import { Route as ApiAiChatRouteImport } from './routes/api/ai.chat'
 
 const VerifyRoute = VerifyRouteImport.update({
@@ -47,6 +49,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiReadinessRoute = ApiReadinessRouteImport.update({
+  id: '/api/readiness',
+  path: '/api/readiness',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAiChatRoute = ApiAiChatRouteImport.update({
   id: '/api/ai/chat',
   path: '/api/ai/chat',
@@ -60,6 +72,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/verify': typeof VerifyRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/readiness': typeof ApiReadinessRoute
   '/api/ai/chat': typeof ApiAiChatRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +83,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/verify': typeof VerifyRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/readiness': typeof ApiReadinessRoute
   '/api/ai/chat': typeof ApiAiChatRoute
 }
 export interface FileRoutesById {
@@ -79,6 +95,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/verify': typeof VerifyRoute
+  '/api/health': typeof ApiHealthRoute
+  '/api/readiness': typeof ApiReadinessRoute
   '/api/ai/chat': typeof ApiAiChatRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +108,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/verify'
+    | '/api/health'
+    | '/api/readiness'
     | '/api/ai/chat'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +119,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/verify'
+    | '/api/health'
+    | '/api/readiness'
     | '/api/ai/chat'
   id:
     | '__root__'
@@ -108,6 +130,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/pricing'
     | '/verify'
+    | '/api/health'
+    | '/api/readiness'
     | '/api/ai/chat'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +142,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   VerifyRoute: typeof VerifyRoute
+  ApiHealthRoute: typeof ApiHealthRoute
+  ApiReadinessRoute: typeof ApiReadinessRoute
   ApiAiChatRoute: typeof ApiAiChatRoute
 }
 
@@ -165,6 +191,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/readiness': {
+      id: '/api/readiness'
+      path: '/api/readiness'
+      fullPath: '/api/readiness'
+      preLoaderRoute: typeof ApiReadinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/ai/chat': {
       id: '/api/ai/chat'
       path: '/api/ai/chat'
@@ -182,8 +222,20 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   VerifyRoute: VerifyRoute,
+  ApiHealthRoute: ApiHealthRoute,
+  ApiReadinessRoute: ApiReadinessRoute,
   ApiAiChatRoute: ApiAiChatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -10,6 +10,7 @@ import {
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 function NotFoundComponent() {
   return (
@@ -121,7 +122,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <ErrorBoundary>
+        <Outlet />
+      </ErrorBoundary>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>
   );
