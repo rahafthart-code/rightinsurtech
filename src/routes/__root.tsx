@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Right — تأمين وحماية أصولك الثمينة" },
       { name: "description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
       { name: "author", content: "Rayet" },
-      { property: "og:title", content: "Right — تأمين أصولك الثمينة" },
-      { property: "og:description", content: "حماية متكاملة لخيلك، إبلك، وصقورك. اشترك في 60 ثانية." },
+      { property: "og:title", content: "Right — تأمين وحماية أصولك الثمينة" },
+      { property: "og:description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Right — تأمين وحماية أصولك الثمينة" },
+      { name: "twitter:description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png" },
     ],
     links: [
       {
