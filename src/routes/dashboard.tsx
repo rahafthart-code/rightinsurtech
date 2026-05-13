@@ -101,6 +101,9 @@ function Dashboard() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2"><img src={logo} alt="Right" className="h-7" /></Link>
           <div className="flex items-center gap-3">
+            <Link to="/assistant" className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-2 text-sm font-bold text-foreground hover:bg-gold/15">
+              <Sparkles className="h-4 w-4 text-gold" /> وسام
+            </Link>
             <span className="hidden text-xs text-text-secondary md:inline">{user.phone ?? user.email}</span>
             <button onClick={logout} className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground hover:bg-bg-tertiary">
               <LogOut className="h-4 w-4" /> خروج
