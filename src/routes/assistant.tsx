@@ -78,9 +78,14 @@ function AssistantPage() {
     setMessages((m) => [...m, { role: "assistant", content: "" }]);
 
     try {
+      const { data: sess } = await supabase.auth.getSession();
+      const token = sess.session?.access_token;
       const res = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ messages: next, context: buildContext() }),
       });
       if (!res.ok || !res.body) {
