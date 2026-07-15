@@ -20,7 +20,7 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 // Inject security headers + sensible cache hints on every response.
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
   const response = await next();
-  const res = response instanceof Response ? response : new Response(response as any);
+  const res = response instanceof Response ? response : new Response(String(response));
   const headers = new Headers(res.headers);
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("X-Frame-Options", "DENY");

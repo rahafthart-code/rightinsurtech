@@ -19,15 +19,21 @@ function LoginPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!valid) { setErr("الرجاء إدخال رقم جوال سعودي صحيح يبدأ بـ 5"); return; }
-    setErr(""); setLoading(true);
+    if (!valid) {
+      setErr("الرجاء إدخال رقم جوال سعودي صحيح يبدأ بـ 5");
+      return;
+    }
+    setErr("");
+    setLoading(true);
     const fullPhone = `+966${phone}`;
     const { error } = await supabase.auth.signInWithOtp({ phone: fullPhone });
     setLoading(false);
     if (error) {
-      setErr(error.message.includes("provider") || error.message.includes("SMS")
-        ? "خدمة الرسائل غير مفعّلة بعد على الحساب. يرجى تفعيل مزود SMS من إعدادات Cloud."
-        : error.message);
+      setErr(
+        error.message.includes("provider") || error.message.includes("SMS")
+          ? "خدمة الرسائل غير مفعّلة بعد على الحساب. يرجى تفعيل مزود SMS من إعدادات Cloud."
+          : error.message,
+      );
       return;
     }
     sessionStorage.setItem("right_phone", fullPhone);
@@ -40,15 +46,21 @@ function LoginPage() {
         {/* Form side */}
         <div className="flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md">
-            <Link to="/" className="inline-flex items-center gap-2"><img src={logo} alt="Right" className="h-7" /></Link>
+            <Link to="/" className="inline-flex items-center gap-2">
+              <img src={logo} alt="Right" className="h-7" />
+            </Link>
             <h1 className="mt-10 text-3xl font-black text-foreground">أهلاً بك في Right</h1>
-            <p className="mt-2 text-sm text-text-secondary">سجّل برقم جوالك — سنرسل لك رمز تحقق فوري.</p>
+            <p className="mt-2 text-sm text-text-secondary">
+              سجّل برقم جوالك — سنرسل لك رمز تحقق فوري.
+            </p>
 
             <form onSubmit={submit} className="mt-8 space-y-4">
               <label className="block">
                 <span className="mb-2 block text-sm font-medium text-foreground">رقم الجوال</span>
                 <div className="flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-3 shadow-premium focus-within:border-gold focus-within:ring-2 focus-within:ring-gold/20">
-                  <span dir="ltr" className="font-mono text-sm text-text-tertiary">+966</span>
+                  <span dir="ltr" className="font-mono text-sm text-text-tertiary">
+                    +966
+                  </span>
                   <input
                     dir="ltr"
                     inputMode="numeric"
@@ -72,7 +84,15 @@ function LoginPage() {
               </button>
 
               <p className="text-center text-xs text-text-tertiary">
-                بمتابعتك توافق على <a href="#" className="text-foreground underline">الشروط</a> و<a href="#" className="text-foreground underline">سياسة الخصوصية</a>.
+                بمتابعتك توافق على{" "}
+                <a href="#" className="text-foreground underline">
+                  الشروط
+                </a>{" "}
+                و
+                <a href="#" className="text-foreground underline">
+                  سياسة الخصوصية
+                </a>
+                .
               </p>
             </form>
 
@@ -95,9 +115,15 @@ function LoginPage() {
               <div className="mt-6 text-sm text-white/70">— أبو فيصل · مربّي خيل عربي · القصيم</div>
             </div>
             <div className="grid grid-cols-3 gap-4 text-center text-xs text-white/70">
-              <div><div className="text-2xl font-black text-gold-light">+1,200</div>أصل محمي</div>
-              <div><div className="text-2xl font-black text-gold-light">48س</div>متوسط المطالبة</div>
-              <div><div className="text-2xl font-black text-gold-light">99.2%</div>رضا الملاك</div>
+              <div>
+                <div className="text-2xl font-black text-gold-light">+1,200</div>أصل محمي
+              </div>
+              <div>
+                <div className="text-2xl font-black text-gold-light">48س</div>متوسط المطالبة
+              </div>
+              <div>
+                <div className="text-2xl font-black text-gold-light">99.2%</div>رضا الملاك
+              </div>
             </div>
           </div>
         </div>

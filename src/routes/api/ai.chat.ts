@@ -7,7 +7,8 @@ async function requireUser(request: Request): Promise<Response | null> {
   const authHeader = request.headers.get("authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { "content-type": "application/json" },
+      status: 401,
+      headers: { "content-type": "application/json" },
     });
   }
   const token = authHeader.slice(7);
@@ -15,14 +16,16 @@ async function requireUser(request: Request): Promise<Response | null> {
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) {
     return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-      status: 500, headers: { "content-type": "application/json" },
+      status: 500,
+      headers: { "content-type": "application/json" },
     });
   }
   const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
   const { data, error } = await sb.auth.getClaims(token);
   if (error || !data?.claims?.sub) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { "content-type": "application/json" },
+      status: 401,
+      headers: { "content-type": "application/json" },
     });
   }
   return null;
@@ -52,27 +55,35 @@ export const Route = createFileRoute("/api/ai/chat")({
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           return new Response(JSON.stringify({ error: "LOVABLE_API_KEY is not configured" }), {
-            status: 500, headers: { "content-type": "application/json" },
+            status: 500,
+            headers: { "content-type": "application/json" },
           });
         }
         let body: { messages?: Msg[]; context?: string } = {};
-        try { body = await request.json(); } catch { /* noop */ }
+        try {
+          body = await request.json();
+        } catch {
+          /* noop */
+        }
         const messages = Array.isArray(body.messages) ? body.messages.slice(-12) : [];
         if (!messages.length) {
           return new Response(JSON.stringify({ error: "messages required" }), {
-            status: 400, headers: { "content-type": "application/json" },
+            status: 400,
+            headers: { "content-type": "application/json" },
           });
         }
 
         const sys: Msg = {
           role: "system",
-          content: body.context ? `${SYSTEM_PROMPT}\n\nسياق الحيوان الحالي:\n${body.context}` : SYSTEM_PROMPT,
+          content: body.context
+            ? `${SYSTEM_PROMPT}\n\nسياق الحيوان الحالي:\n${body.context}`
+            : SYSTEM_PROMPT,
         };
 
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${apiKey}`,
+            Authorization: `Bearer ${apiKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -85,11 +96,15 @@ export const Route = createFileRoute("/api/ai/chat")({
         if (!upstream.ok || !upstream.body) {
           const text = await upstream.text().catch(() => "");
           const status = upstream.status === 429 ? 429 : upstream.status === 402 ? 402 : 500;
-          const msg = status === 429 ? "تم تجاوز الحد المسموح، حاول بعد دقائق."
-            : status === 402 ? "رصيد الذكاء الاصطناعي غير كافٍ. يرجى إضافة رصيد لمتابعة الاستخدام."
-            : (text || "تعذّر الاتصال بمزود الذكاء الاصطناعي.");
+          const msg =
+            status === 429
+              ? "تم تجاوز الحد المسموح، حاول بعد دقائق."
+              : status === 402
+                ? "رصيد الذكاء الاصطناعي غير كافٍ. يرجى إضافة رصيد لمتابعة الاستخدام."
+                : text || "تعذّر الاتصال بمزود الذكاء الاصطناعي.";
           return new Response(JSON.stringify({ error: msg }), {
-            status, headers: { "content-type": "application/json" },
+            status,
+            headers: { "content-type": "application/json" },
           });
         }
 
@@ -98,7 +113,7 @@ export const Route = createFileRoute("/api/ai/chat")({
           headers: {
             "Content-Type": "text/event-stream",
             "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
+            Connection: "keep-alive",
           },
         });
       },

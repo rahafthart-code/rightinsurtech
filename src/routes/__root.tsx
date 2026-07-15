@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { logger } from "@/lib/logger";
 
 function NotFoundComponent() {
   return (
@@ -35,7 +36,7 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  console.error(error);
+  logger.error("route.error_component", { message: error.message, stack: error.stack });
   const router = useRouter();
 
   return (
@@ -75,17 +76,37 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Right — تأمين وحماية أصولك الثمينة" },
-      { name: "description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
+      {
+        name: "description",
+        content:
+          "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين.",
+      },
       { name: "author", content: "Rayet" },
       { property: "og:title", content: "Right — تأمين وحماية أصولك الثمينة" },
-      { property: "og:description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
+      {
+        property: "og:description",
+        content:
+          "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
       { name: "twitter:title", content: "Right — تأمين وحماية أصولك الثمينة" },
-      { name: "twitter:description", content: "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png" },
+      {
+        name: "twitter:description",
+        content:
+          "منصة تأمين رقمية متكاملة للخيل والإبل والصقور. مراقبة ذكية، تنبؤ AI، وتغطية فورية — ضمن البيئة التنظيمية التجريبية لهيئة التأمين.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/df30c136-bafb-44ac-b857-2d129a0ccb89/id-preview-b1922186--1630c2d2-b698-475e-b4a4-a62195555322.lovable.app-1778673035681.png",
+      },
     ],
     links: [
       {
@@ -106,7 +127,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+          rel="stylesheet"
+        />
         <HeadContent />
       </head>
       <body>

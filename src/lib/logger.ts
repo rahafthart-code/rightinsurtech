@@ -5,7 +5,8 @@ type Level = "debug" | "info" | "warn" | "error";
 
 const isProd =
   (typeof process !== "undefined" && process.env?.NODE_ENV === "production") ||
-  (typeof import.meta !== "undefined" && (import.meta as any).env?.PROD);
+  (typeof import.meta !== "undefined" &&
+    (import.meta as ImportMeta & { env?: { PROD?: boolean } }).env?.PROD === true);
 
 function emit(level: Level, msg: string, meta?: Record<string, unknown>) {
   const entry = {
@@ -15,7 +16,6 @@ function emit(level: Level, msg: string, meta?: Record<string, unknown>) {
     ...(meta ?? {}),
   };
   const line = isProd ? JSON.stringify(entry) : `[${level.toUpperCase()}] ${msg}`;
-  // eslint-disable-next-line no-console
   const fn = level === "error" ? console.error : level === "warn" ? console.warn : console.log;
   if (isProd) fn(line);
   else fn(line, meta ?? "");

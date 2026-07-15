@@ -17,7 +17,10 @@ export const Route = createFileRoute("/api/readiness")({
           const key = process.env.SUPABASE_PUBLISHABLE_KEY;
           if (!url || !key) throw new Error("missing supabase env");
           const sb = createClient(url, key, { auth: { persistSession: false } });
-          const { error } = await sb.from("profiles").select("id", { count: "exact", head: true }).limit(1);
+          const { error } = await sb
+            .from("profiles")
+            .select("id", { count: "exact", head: true })
+            .limit(1);
           if (error && error.code !== "PGRST116") throw error;
           checks.database = { ok: true, latency_ms: Date.now() - dbStart };
         } catch (e) {

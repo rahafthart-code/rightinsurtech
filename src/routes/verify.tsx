@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import logo from "@/assets/right-logo.png";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/verify")({
   component: VerifyPage,
@@ -59,7 +60,8 @@ function VerifyPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ready) return;
-    setLoading(true); setErr("");
+    setLoading(true);
+    setErr("");
     const { error } = await supabase.auth.verifyOtp({ phone, token: code, type: "sms" });
     setLoading(false);
     if (error) {
@@ -72,18 +74,28 @@ function VerifyPage() {
 
   const resend = async () => {
     if (!phone) return;
+    const { error } = await supabase.auth.signInWithOtp({ phone });
+    if (error) {
+      toast.error("تعذّر إعادة إرسال الرمز. حاول مرة أخرى.");
+      return;
+    }
     setSeconds(45);
-    await supabase.auth.signInWithOtp({ phone });
+    toast.success("تم إرسال رمز جديد");
   };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-bg-secondary px-6 py-12">
       <div className="w-full max-w-md rounded-3xl border border-border bg-surface p-8 shadow-premium">
-        <Link to="/login"><img src={logo} alt="Right" className="h-7" /></Link>
+        <Link to="/login">
+          <img src={logo} alt="Right" className="h-7" />
+        </Link>
 
         <h1 className="mt-8 text-2xl font-black text-foreground">أدخل رمز التحقق</h1>
         <p className="mt-2 text-sm text-text-secondary">
-          أرسلنا رمزاً مكوناً من 6 أرقام إلى <span dir="ltr" className="font-mono font-bold text-foreground">{phone}</span>
+          أرسلنا رمزاً مكوناً من 6 أرقام إلى{" "}
+          <span dir="ltr" className="font-mono font-bold text-foreground">
+            {phone}
+          </span>
         </p>
 
         <form onSubmit={submit} className="mt-8">
@@ -91,7 +103,9 @@ function VerifyPage() {
             {digits.map((d, i) => (
               <input
                 key={i}
-                ref={(el) => { refs.current[i] = el; }}
+                ref={(el) => {
+                  refs.current[i] = el;
+                }}
                 value={d}
                 onChange={(e) => onChange(i, e.target.value)}
                 onKeyDown={(e) => onKey(i, e)}
@@ -114,11 +128,22 @@ function VerifyPage() {
           </button>
 
           <div className="mt-6 flex items-center justify-between text-xs text-text-tertiary">
-            <Link to="/login" className="text-foreground hover:underline">تغيير الرقم</Link>
+            <Link to="/login" className="text-foreground hover:underline">
+              تغيير الرقم
+            </Link>
             {seconds > 0 ? (
-              <span>إعادة الإرسال خلال <span className="font-mono text-foreground">{seconds}</span> ثانية</span>
+              <span>
+                إعادة الإرسال خلال <span className="font-mono text-foreground">{seconds}</span>{" "}
+                ثانية
+              </span>
             ) : (
-              <button type="button" onClick={resend} className="font-bold text-gold hover:underline">إعادة إرسال الرمز</button>
+              <button
+                type="button"
+                onClick={resend}
+                className="font-bold text-gold hover:underline"
+              >
+                إعادة إرسال الرمز
+              </button>
             )}
           </div>
         </form>

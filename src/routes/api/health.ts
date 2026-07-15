@@ -9,7 +9,7 @@ export const Route = createFileRoute("/api/health")({
           JSON.stringify({
             status: "ok",
             service: "right-api",
-            uptime: typeof process !== "undefined" ? process.uptime?.() ?? null : null,
+            uptime: typeof process !== "undefined" ? (process.uptime?.() ?? null) : null,
             timestamp: new Date().toISOString(),
           }),
           {

@@ -9,7 +9,11 @@ export const Route = createFileRoute("/pricing")({
   head: () => ({
     meta: [
       { title: "الأسعار — Right" },
-      { name: "description", content: "ثلاث باقات لحماية أصلك: حارس، راعي، وأمير. ابتداءً من 490 ريال شهرياً للحيوان الواحد." },
+      {
+        name: "description",
+        content:
+          "ثلاث باقات لحماية أصلك: حارس، راعي، وأمير. ابتداءً من 490 ريال شهرياً للحيوان الواحد.",
+      },
     ],
   }),
 });
@@ -93,17 +97,23 @@ function PricingPage() {
               اختر مستوى الحماية الذي
               <span className="block text-gold">يليق بأصلك</span>
             </h1>
-            <p className="mt-5 text-lg text-text-secondary">سعر شهري لكل حيوان — بدون التزامات سنوية. ألغِ في أي وقت.</p>
+            <p className="mt-5 text-lg text-text-secondary">
+              سعر شهري لكل حيوان — بدون التزامات سنوية. ألغِ في أي وقت.
+            </p>
 
             <div className="mx-auto mt-8 inline-flex items-center gap-1 rounded-full border border-border bg-surface p-1 shadow-premium">
               <button
                 onClick={() => setYearly(false)}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition ${!yearly ? "bg-foreground text-background" : "text-text-secondary"}`}
-              >شهري</button>
+              >
+                شهري
+              </button>
               <button
                 onClick={() => setYearly(true)}
                 className={`rounded-full px-5 py-2 text-sm font-medium transition ${yearly ? "bg-gradient-gold text-primary-foreground" : "text-text-secondary"}`}
-              >سنوي · وفّر 15%</button>
+              >
+                سنوي · وفّر 15%
+              </button>
             </div>
           </div>
         </section>
@@ -116,7 +126,8 @@ function PricingPage() {
           </div>
 
           <div className="mx-auto mt-12 max-w-3xl rounded-2xl border border-border bg-bg-secondary p-6 text-center text-sm text-text-secondary">
-            جميع الباقات تشمل: تطبيق iOS و Android · دعم عربي 24/7 · ضمن البيئة التنظيمية التجريبية لهيئة التأمين · بدون رسوم خفية.
+            جميع الباقات تشمل: تطبيق iOS و Android · دعم عربي 24/7 · ضمن البيئة التنظيمية التجريبية
+            لهيئة التأمين · بدون رسوم خفية.
           </div>
         </section>
 
@@ -140,7 +151,11 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
             <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-gold shadow-gold">
               <Icon className="h-5 w-5 text-primary-foreground" />
             </div>
-            {plan.tag && <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">{plan.tag}</span>}
+            {plan.tag && (
+              <span className="rounded-full border border-gold/40 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-gold">
+                {plan.tag}
+              </span>
+            )}
           </div>
           <h3 className="mt-6 text-2xl font-black text-gold-light">{plan.name}</h3>
           <p className="mt-2 text-sm text-white/70">{plan.blurb}</p>
@@ -148,8 +163,15 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
             <span className="text-5xl font-black text-white">{price.toLocaleString("ar-SA")}</span>
             <span className="text-sm text-white/60">ر.س / شهر</span>
           </div>
-          {yearly && <div className="mt-1 text-xs text-gold">يُفوتر سنوياً · {(price * 12).toLocaleString("ar-SA")} ر.س</div>}
-          <Link to="/login" className="mt-7 inline-flex w-full items-center justify-center rounded-lg bg-gradient-gold px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95">
+          {yearly && (
+            <div className="mt-1 text-xs text-gold">
+              يُفوتر سنوياً · {(price * 12).toLocaleString("ar-SA")} ر.س
+            </div>
+          )}
+          <Link
+            to="/login"
+            className="mt-7 inline-flex w-full items-center justify-center rounded-lg bg-gradient-gold px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95"
+          >
             تواصل مع مدير الحساب
           </Link>
           <ul className="mt-7 space-y-3 border-t border-white/10 pt-6 text-sm">
@@ -166,14 +188,20 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
   }
 
   return (
-    <article className={`relative rounded-3xl border bg-surface p-8 shadow-premium transition ${plan.highlight ? "border-gold ring-2 ring-gold/30 lg:-mt-4 lg:mb-0" : "border-border"}`}>
+    <article
+      className={`relative rounded-3xl border bg-surface p-8 shadow-premium transition ${plan.highlight ? "border-gold ring-2 ring-gold/30 lg:-mt-4 lg:mb-0" : "border-border"}`}
+    >
       {plan.tag && (
         <div className="absolute -top-3 right-1/2 translate-x-1/2 rounded-full bg-gradient-gold px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground shadow-gold">
           {plan.tag}
         </div>
       )}
-      <div className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${plan.highlight ? "bg-gradient-gold shadow-gold" : "bg-bg-secondary"}`}>
-        <Icon className={`h-5 w-5 ${plan.highlight ? "text-primary-foreground" : "text-foreground"}`} />
+      <div
+        className={`inline-flex h-11 w-11 items-center justify-center rounded-xl ${plan.highlight ? "bg-gradient-gold shadow-gold" : "bg-bg-secondary"}`}
+      >
+        <Icon
+          className={`h-5 w-5 ${plan.highlight ? "text-primary-foreground" : "text-foreground"}`}
+        />
       </div>
       <h3 className="mt-6 text-2xl font-black text-foreground">{plan.name}</h3>
       <p className="mt-2 text-sm text-text-secondary">{plan.blurb}</p>
@@ -181,7 +209,11 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
         <span className="text-5xl font-black text-foreground">{price.toLocaleString("ar-SA")}</span>
         <span className="text-sm text-text-tertiary">ر.س / شهر</span>
       </div>
-      {yearly && <div className="mt-1 text-xs text-teal">يُفوتر سنوياً · {(price * 12).toLocaleString("ar-SA")} ر.س</div>}
+      {yearly && (
+        <div className="mt-1 text-xs text-teal">
+          يُفوتر سنوياً · {(price * 12).toLocaleString("ar-SA")} ر.س
+        </div>
+      )}
       <Link
         to="/login"
         className={`mt-7 inline-flex w-full items-center justify-center rounded-lg px-6 py-3.5 text-sm font-bold transition ${plan.highlight ? "bg-gradient-gold text-primary-foreground shadow-gold hover:opacity-95" : "border border-border bg-bg-secondary text-foreground hover:bg-bg-tertiary"}`}
@@ -191,7 +223,9 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
       <ul className="mt-7 space-y-3 border-t border-border pt-6 text-sm">
         {plan.features.map((f) => (
           <li key={f} className="flex items-start gap-3 text-foreground">
-            <Check className={`mt-0.5 h-4 w-4 shrink-0 ${plan.highlight ? "text-gold" : "text-teal"}`} />
+            <Check
+              className={`mt-0.5 h-4 w-4 shrink-0 ${plan.highlight ? "text-gold" : "text-teal"}`}
+            />
             <span>{f}</span>
           </li>
         ))}
@@ -202,10 +236,22 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
 
 function FAQ() {
   const items = [
-    { q: "كيف يتم تقييم قيمة الأصل؟", a: "نعتمد على الشريحة، السلالة، السجل، وأسعار السوق الثانوي. النموذج يقترح قيمة وأنت تؤكد." },
-    { q: "هل تشمل التغطية النفوق؟", a: "نعم، باقتا راعي وأمير تشملان النفوق الناتج عن المرض أو الحادث." },
-    { q: "ما طرق الدفع المتاحة؟", a: "Apple Pay، مدى، STC Pay، وجميع البطاقات البنكية. الاشتراك يبدأ فور تأكيد الدفع." },
-    { q: "هل يمكنني الإلغاء؟", a: "نعم في أي وقت من داخل التطبيق. لن يُجدّد الاشتراك تلقائياً بعد الإلغاء." },
+    {
+      q: "كيف يتم تقييم قيمة الأصل؟",
+      a: "نعتمد على الشريحة، السلالة، السجل، وأسعار السوق الثانوي. النموذج يقترح قيمة وأنت تؤكد.",
+    },
+    {
+      q: "هل تشمل التغطية النفوق؟",
+      a: "نعم، باقتا راعي وأمير تشملان النفوق الناتج عن المرض أو الحادث.",
+    },
+    {
+      q: "ما طرق الدفع المتاحة؟",
+      a: "Apple Pay، مدى، STC Pay، وجميع البطاقات البنكية. الاشتراك يبدأ فور تأكيد الدفع.",
+    },
+    {
+      q: "هل يمكنني الإلغاء؟",
+      a: "نعم في أي وقت من داخل التطبيق. لن يُجدّد الاشتراك تلقائياً بعد الإلغاء.",
+    },
   ];
   return (
     <section className="bg-bg-secondary py-20">
@@ -213,7 +259,10 @@ function FAQ() {
         <h2 className="text-center text-3xl font-black text-foreground">الأسئلة الشائعة</h2>
         <div className="mt-10 space-y-3">
           {items.map((it) => (
-            <details key={it.q} className="group rounded-xl border border-border bg-surface p-5 shadow-premium">
+            <details
+              key={it.q}
+              className="group rounded-xl border border-border bg-surface p-5 shadow-premium"
+            >
               <summary className="flex cursor-pointer items-center justify-between text-base font-bold text-foreground">
                 {it.q}
                 <span className="text-gold transition group-open:rotate-45">+</span>
