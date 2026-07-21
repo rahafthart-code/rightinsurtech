@@ -19,8 +19,10 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
 
 // Inject security headers + sensible cache hints on every response.
 const securityHeadersMiddleware = createMiddleware().server(async ({ next, request }) => {
-  const response = await next();
-  const res = response instanceof Response ? response : new Response(String(response));
+  // next() resolves to the middleware chain's context object, not the
+  // Response itself — the Response lives at ctx.response.
+  const ctx = await next();
+  const res = ctx.response;
   const headers = new Headers(res.headers);
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("X-Frame-Options", "DENY");
