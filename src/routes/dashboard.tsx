@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { NotificationBell } from "@/components/notification-bell";
 import { PLAN_INFO, PLAN_IDS, type PlanId } from "@/lib/plans";
 import logo from "@/assets/right-logo.png";
 import {
@@ -170,6 +171,7 @@ function Dashboard() {
             <span className="hidden text-xs text-text-secondary md:inline">
               {user.phone ?? user.email}
             </span>
+            <NotificationBell userId={user.id} />
             <button
               onClick={logout}
               className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground hover:bg-bg-tertiary"

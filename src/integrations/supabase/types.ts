@@ -193,6 +193,67 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          read_at: string | null
+          related_asset_id: string | null
+          related_claim_id: string | null
+          related_policy_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["notification_kind"]
+          read_at?: string | null
+          related_asset_id?: string | null
+          related_claim_id?: string | null
+          related_policy_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["notification_kind"]
+          read_at?: string | null
+          related_asset_id?: string | null
+          related_claim_id?: string | null
+          related_policy_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_related_asset_id_fkey"
+            columns: ["related_asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_related_claim_id_fkey"
+            columns: ["related_claim_id"]
+            isOneToOne: false
+            referencedRelation: "claims"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_related_policy_id_fkey"
+            columns: ["related_policy_id"]
+            isOneToOne: false
+            referencedRelation: "policies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -270,6 +331,7 @@ export type Database = {
       asset_gender: "male" | "female"
       asset_type: "horse" | "camel" | "falcon"
       claim_status: "submitted" | "reviewing" | "approved" | "rejected" | "paid"
+      notification_kind: "claim_status" | "policy_status" | "vital_alert"
       policy_plan: "hares" | "raee" | "amir"
       policy_status: "active" | "pending" | "expired" | "cancelled"
     }
@@ -403,6 +465,7 @@ export const Constants = {
       asset_gender: ["male", "female"],
       asset_type: ["horse", "camel", "falcon"],
       claim_status: ["submitted", "reviewing", "approved", "rejected", "paid"],
+      notification_kind: ["claim_status", "policy_status", "vital_alert"],
       policy_plan: ["hares", "raee", "amir"],
       policy_status: ["active", "pending", "expired", "cancelled"],
     },
