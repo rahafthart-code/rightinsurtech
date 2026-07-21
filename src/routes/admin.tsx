@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { Skeleton } from "@/components/ui/skeleton";
 import logo from "@/assets/right-logo.png";
-import { LogOut, ShieldCheck } from "lucide-react";
+import { LogOut, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin")({
@@ -103,8 +104,8 @@ function AdminPage() {
 
   if (authLoading || !user || checkingRole) {
     return (
-      <div className="grid min-h-screen place-items-center bg-bg-secondary text-text-secondary">
-        جاري التحميل…
+      <div className="grid min-h-screen place-items-center bg-bg-secondary">
+        <Loader2 className="h-6 w-6 animate-spin text-gold" />
       </div>
     );
   }
@@ -154,7 +155,11 @@ function AdminPage() {
         <h1 className="mt-2 text-3xl font-black text-foreground">المطالبات ووثائق التأمين</h1>
 
         {loadingData ? (
-          <div className="mt-8 text-text-secondary">جاري تحميل البيانات…</div>
+          <div className="mt-8 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <RowSkeleton key={i} />
+            ))}
+          </div>
         ) : (
           <>
             <section className="mt-8">
@@ -189,6 +194,24 @@ function AdminPage() {
           </>
         )}
       </main>
+    </div>
+  );
+}
+
+function RowSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-5 shadow-premium">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+        <Skeleton className="h-5 w-20 rounded-full" />
+      </div>
+      <div className="mt-4 flex gap-3 border-t border-border pt-4">
+        <Skeleton className="h-9 w-32 rounded-lg" />
+        <Skeleton className="h-9 w-24 rounded-lg" />
+      </div>
     </div>
   );
 }
@@ -278,7 +301,7 @@ function ClaimRow({ claim, onSaved }: { claim: Claim; onSaved: () => void }) {
         <button
           onClick={save}
           disabled={!dirty || saving}
-          className="rounded-lg bg-gradient-gold px-4 py-2 text-sm font-bold text-primary-foreground shadow-gold disabled:opacity-50"
+          className="rounded-lg bg-gradient-gold px-4 py-2 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100"
         >
           {saving ? "جاري الحفظ…" : "حفظ"}
         </button>
@@ -345,7 +368,7 @@ function PolicyRow({ policy, onSaved }: { policy: Policy; onSaved: () => void })
         <button
           onClick={save}
           disabled={!dirty || saving}
-          className="rounded-lg bg-gradient-gold px-4 py-2 text-sm font-bold text-primary-foreground shadow-gold disabled:opacity-50"
+          className="rounded-lg bg-gradient-gold px-4 py-2 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.97] disabled:opacity-50 disabled:active:scale-100"
         >
           {saving ? "جاري الحفظ…" : "حفظ"}
         </button>

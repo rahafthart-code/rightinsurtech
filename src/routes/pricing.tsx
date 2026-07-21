@@ -144,7 +144,7 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
 
   if (plan.premium) {
     return (
-      <article className="relative overflow-hidden rounded-3xl bg-gradient-dark p-8 text-white shadow-premium">
+      <article className="relative overflow-hidden rounded-3xl bg-gradient-dark p-8 text-white shadow-premium transition hover:-translate-y-1 hover:shadow-xl">
         <div className="absolute inset-0 bg-gradient-hero opacity-20" />
         <div className="relative">
           <div className="flex items-center justify-between">
@@ -170,7 +170,7 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
           )}
           <Link
             to="/login"
-            className="mt-7 inline-flex w-full items-center justify-center rounded-lg bg-gradient-gold px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95"
+            className="mt-7 inline-flex w-full items-center justify-center rounded-lg bg-gradient-gold px-6 py-3.5 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98]"
           >
             تواصل مع مدير الحساب
           </Link>
@@ -189,7 +189,7 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
 
   return (
     <article
-      className={`relative rounded-3xl border bg-surface p-8 shadow-premium transition ${plan.highlight ? "border-gold ring-2 ring-gold/30 lg:-mt-4 lg:mb-0" : "border-border"}`}
+      className={`relative rounded-3xl border bg-surface p-8 shadow-premium transition hover:-translate-y-1 hover:shadow-xl ${plan.highlight ? "border-gold ring-2 ring-gold/30 lg:-mt-4 lg:mb-0" : "border-border"}`}
     >
       {plan.tag && (
         <div className="absolute -top-3 right-1/2 translate-x-1/2 rounded-full bg-gradient-gold px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground shadow-gold">
@@ -216,7 +216,7 @@ function PlanCard({ plan, factor, yearly }: { plan: Plan; factor: number; yearly
       )}
       <Link
         to="/login"
-        className={`mt-7 inline-flex w-full items-center justify-center rounded-lg px-6 py-3.5 text-sm font-bold transition ${plan.highlight ? "bg-gradient-gold text-primary-foreground shadow-gold hover:opacity-95" : "border border-border bg-bg-secondary text-foreground hover:bg-bg-tertiary"}`}
+        className={`mt-7 inline-flex w-full items-center justify-center rounded-lg px-6 py-3.5 text-sm font-bold transition ${plan.highlight ? "bg-gradient-gold text-primary-foreground shadow-gold hover:opacity-95 active:scale-[0.98]" : "border border-border bg-bg-secondary text-foreground hover:bg-bg-tertiary active:scale-[0.98]"}`}
       >
         ابدأ بـ {plan.name}
       </Link>

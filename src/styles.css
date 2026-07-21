@@ -158,11 +158,23 @@
 
 @layer utilities {
   .font-mono { font-family: var(--font-mono); }
-  .bg-gradient-gold { background: var(--gradient-gold); }
-  .bg-gradient-dark { background: var(--gradient-dark); }
-  .bg-gradient-hero { background: var(--gradient-hero); }
+  /* background-image, not the `background` shorthand: the shorthand resets
+     every other background sub-property it doesn't mention, which silently
+     overrides Tailwind's bg-clip-text (background-clip) wherever the two
+     are combined, turning gradient text into a solid-filled box. */
+  .bg-gradient-gold { background-image: var(--gradient-gold); }
+  .bg-gradient-dark { background-image: var(--gradient-dark); }
+  .bg-gradient-hero { background-image: var(--gradient-hero); }
   .shadow-premium { box-shadow: var(--shadow-premium); }
   .shadow-gold { box-shadow: var(--shadow-gold); }
   .text-gold { color: var(--gold); }
   .text-teal { color: var(--teal); }
+
+  @keyframes shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-4px); }
+    40%, 60% { transform: translateX(4px); }
+  }
+  .animate-shake { animation: shake 0.4s ease-in-out; }
 }

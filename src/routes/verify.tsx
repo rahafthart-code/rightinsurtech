@@ -33,6 +33,7 @@ function VerifyPage() {
   }, [seconds]);
 
   const onChange = (i: number, v: string) => {
+    if (err) setErr("");
     const d = v.replace(/\D/g, "").slice(-1);
     const next = [...digits];
     next[i] = d;
@@ -99,7 +100,11 @@ function VerifyPage() {
         </p>
 
         <form onSubmit={submit} className="mt-8">
-          <div dir="ltr" className="flex justify-between gap-2" onPaste={onPaste}>
+          <div
+            dir="ltr"
+            className={`grid grid-cols-6 gap-2 ${err ? "animate-shake" : ""}`}
+            onPaste={onPaste}
+          >
             {digits.map((d, i) => (
               <input
                 key={i}
@@ -112,7 +117,14 @@ function VerifyPage() {
                 inputMode="numeric"
                 maxLength={1}
                 autoFocus={i === 0}
-                className="h-14 w-12 rounded-xl border border-border bg-bg-secondary text-center font-mono text-2xl font-bold text-foreground outline-none transition focus:border-gold focus:bg-surface focus:ring-2 focus:ring-gold/20"
+                aria-invalid={!!err}
+                className={`h-12 w-full scale-100 rounded-xl border text-center font-mono text-2xl font-bold text-foreground outline-none transition-all duration-150 focus:border-gold focus:bg-surface focus:ring-2 focus:ring-gold/20 sm:h-14 ${
+                  err
+                    ? "border-destructive/60 bg-destructive/5"
+                    : d
+                      ? "scale-105 border-gold/60 bg-surface"
+                      : "border-border bg-bg-secondary"
+                }`}
               />
             ))}
           </div>
@@ -122,7 +134,7 @@ function VerifyPage() {
           <button
             type="submit"
             disabled={!ready || loading}
-            className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-gold px-6 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 disabled:opacity-50"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-gradient-gold px-6 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
           >
             {loading ? "جاري التحقق..." : "تأكيد الرمز"}
           </button>

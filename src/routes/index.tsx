@@ -56,14 +56,14 @@ function Hero() {
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               to="/login"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold px-7 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-gold px-7 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] sm:w-auto"
             >
               ابدأ التأمين خلال 60 ثانية
               <ArrowLeft className="h-4 w-4" />
             </Link>
             <Link
               to="/pricing"
-              className="inline-flex w-full items-center justify-center rounded-lg border border-border bg-surface px-7 py-3.5 text-base font-semibold text-foreground transition hover:bg-bg-secondary sm:w-auto"
+              className="inline-flex w-full items-center justify-center rounded-lg border border-border bg-surface px-7 py-3.5 text-base font-semibold text-foreground transition hover:bg-bg-secondary active:scale-[0.98] sm:w-auto"
             >
               شاهد الباقات
             </Link>
@@ -263,7 +263,7 @@ function FinalCTA() {
         </p>
         <Link
           to="/login"
-          className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-gold px-8 py-4 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95"
+          className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-gold px-8 py-4 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98]"
         >
           ابدأ الآن — أول 14 يوم مجاناً
           <ArrowLeft className="h-4 w-4" />

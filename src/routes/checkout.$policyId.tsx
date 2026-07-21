@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { PLAN_INFO, type PlanId } from "@/lib/plans";
 import logo from "@/assets/right-logo.png";
-import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout/$policyId")({
@@ -73,8 +73,8 @@ function CheckoutPage() {
 
   if (authLoading || !user || policy === undefined) {
     return (
-      <div className="grid min-h-screen place-items-center bg-bg-secondary text-text-secondary">
-        جاري التحميل…
+      <div className="grid min-h-screen place-items-center bg-bg-secondary">
+        <Loader2 className="h-6 w-6 animate-spin text-gold" />
       </div>
     );
   }
@@ -159,8 +159,9 @@ function CheckoutPage() {
             <button
               onClick={pay}
               disabled={paying}
-              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-gold px-6 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 disabled:opacity-50"
+              className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-gold px-6 py-3.5 text-base font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
             >
+              {paying && <Loader2 className="h-4 w-4 animate-spin" />}
               {paying ? "جاري معالجة الدفع…" : "ادفع الآن"}
             </button>
 

@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { NotificationBell } from "@/components/notification-bell";
+import { Skeleton } from "@/components/ui/skeleton";
 import { PLAN_INFO, PLAN_IDS, type PlanId } from "@/lib/plans";
 import logo from "@/assets/right-logo.png";
 import {
@@ -18,6 +19,7 @@ import {
   Sparkles,
   ShieldCheck,
   Umbrella,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -138,8 +140,8 @@ function Dashboard() {
 
   if (authLoading || !user) {
     return (
-      <div className="grid min-h-screen place-items-center bg-bg-secondary text-text-secondary">
-        جاري التحميل…
+      <div className="grid min-h-screen place-items-center bg-bg-secondary">
+        <Loader2 className="h-6 w-6 animate-spin text-gold" />
       </div>
     );
   }
@@ -190,7 +192,7 @@ function Dashboard() {
           </div>
           <button
             onClick={() => setShowAdd(true)}
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-gold px-5 py-3 text-sm font-bold text-primary-foreground shadow-gold hover:opacity-95"
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-gold px-5 py-3 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98]"
           >
             <Plus className="h-4 w-4" /> إضافة أصل
           </button>
@@ -215,7 +217,11 @@ function Dashboard() {
         {/* Assets grid */}
         <div className="mt-8">
           {loading ? (
-            <div className="text-text-secondary">جاري تحميل الأصول…</div>
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <AssetCardSkeleton key={i} />
+              ))}
+            </div>
           ) : assets.length === 0 ? (
             <EmptyState onAdd={() => setShowAdd(true)} />
           ) : (
@@ -299,7 +305,7 @@ function AssetCard({
 }) {
   const Icon = TYPE_ICON[asset.type];
   return (
-    <article className="rounded-2xl border border-border bg-surface p-5 shadow-premium">
+    <article className="rounded-2xl border border-border bg-surface p-5 shadow-premium transition hover:-translate-y-1 hover:shadow-xl">
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-gold shadow-gold">
@@ -347,20 +353,44 @@ function AssetCard({
       <div className="mt-4 flex gap-2">
         <button
           onClick={onPing}
-          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-bg-secondary px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-tertiary"
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-bg-secondary px-3 py-2 text-xs font-medium text-text-secondary transition hover:bg-bg-tertiary active:scale-[0.97]"
         >
           <Activity className="h-3.5 w-3.5" /> محاكاة نبضة (تجريبي)
         </button>
         {(!policy || policy.status === "expired" || policy.status === "cancelled") && (
           <button
             onClick={onInsure}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-gold px-3 py-2 text-xs font-bold text-primary-foreground shadow-gold hover:opacity-95"
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-gold px-3 py-2 text-xs font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.97]"
           >
             <Umbrella className="h-3.5 w-3.5" /> أمّن هذا الأصل
           </button>
         )}
       </div>
     </article>
+  );
+}
+
+function AssetCardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-border bg-surface p-5 shadow-premium">
+      <div className="flex items-start justify-between">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-11 w-11 rounded-xl" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+        </div>
+        <Skeleton className="h-5 w-16 rounded-full" />
+      </div>
+      <Skeleton className="mt-4 h-16 w-full rounded-xl" />
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        <Skeleton className="h-12 rounded-lg" />
+        <Skeleton className="h-12 rounded-lg" />
+        <Skeleton className="h-12 rounded-lg" />
+      </div>
+      <Skeleton className="mt-4 h-9 w-full rounded-lg" />
+    </div>
   );
 }
 
