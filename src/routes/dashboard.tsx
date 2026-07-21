@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/use-is-admin";
 import logo from "@/assets/right-logo.png";
 import {
   LogOut,
@@ -13,6 +14,7 @@ import {
   Crown,
   Bird,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -49,6 +51,7 @@ const TYPE_ICON: Record<Asset["type"], React.ElementType> = {
 
 function Dashboard() {
   const { user, loading: authLoading } = useAuth();
+  const { isAdmin } = useIsAdmin(user);
   const navigate = useNavigate();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [vitalsMap, setVitalsMap] = useState<Record<string, Vital>>({});
@@ -128,6 +131,14 @@ function Dashboard() {
             <img src={logo} alt="Right" className="h-7" />
           </Link>
           <div className="flex items-center gap-3">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm font-bold text-foreground hover:bg-bg-tertiary"
+              >
+                <ShieldCheck className="h-4 w-4 text-gold" /> الإدارة
+              </Link>
+            )}
             <Link
               to="/assistant"
               className="inline-flex items-center gap-2 rounded-md border border-gold/40 bg-gold/10 px-3 py-2 text-sm font-bold text-foreground hover:bg-gold/15"
