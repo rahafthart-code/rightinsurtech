@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { PLAN_INFO, PLAN_IDS, type PlanId } from "@/lib/plans";
 import logo from "@/assets/right-logo.png";
 import {
   LogOut,
@@ -15,6 +16,7 @@ import {
   Bird,
   Sparkles,
   ShieldCheck,
+  Umbrella,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -42,6 +44,9 @@ type Vital = {
   recorded_at: string;
 };
 
+type PolicyStatus = "active" | "pending" | "expired" | "cancelled";
+type AssetPolicy = { id: string; plan: PlanId; status: PolicyStatus };
+
 const TYPE_LABEL: Record<Asset["type"], string> = { horse: "خيل", camel: "إبل", falcon: "صقر" };
 const TYPE_ICON: Record<Asset["type"], React.ElementType> = {
   horse: Crown,
@@ -55,7 +60,9 @@ function Dashboard() {
   const navigate = useNavigate();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [vitalsMap, setVitalsMap] = useState<Record<string, Vital>>({});
+  const [policiesMap, setPoliciesMap] = useState<Record<string, AssetPolicy>>({});
   const [showAdd, setShowAdd] = useState(false);
+  const [insureAsset, setInsureAsset] = useState<Asset | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -75,9 +82,24 @@ function Dashboard() {
     setLoading(false);
   };
 
+  const loadPolicies = async () => {
+    const { data, error } = await supabase
+      .from("policies")
+      .select("id, asset_id, plan, status")
+      .order("created_at", { ascending: false });
+    if (error) return;
+    const map: Record<string, AssetPolicy> = {};
+    for (const p of data ?? []) {
+      // Newest policy per asset wins (query is already newest-first).
+      if (!map[p.asset_id]) map[p.asset_id] = { id: p.id, plan: p.plan, status: p.status };
+    }
+    setPoliciesMap(map);
+  };
+
   useEffect(() => {
     if (!user) return;
     loadAssets();
+    loadPolicies();
 
     // Realtime: vitals
     const channel = supabase
@@ -201,7 +223,9 @@ function Dashboard() {
                   key={a.id}
                   asset={a}
                   vital={vitalsMap[a.id]}
+                  policy={policiesMap[a.id]}
                   onPing={() => simulateVital(a)}
+                  onInsure={() => setInsureAsset(a)}
                 />
               ))}
             </div>
@@ -211,6 +235,15 @@ function Dashboard() {
 
       {showAdd && (
         <AddAssetModal onClose={() => setShowAdd(false)} onSaved={loadAssets} userId={user.id} />
+      )}
+
+      {insureAsset && (
+        <InsureAssetModal
+          asset={insureAsset}
+          userId={user.id}
+          onClose={() => setInsureAsset(null)}
+          onCreated={(policyId) => navigate({ to: "/checkout/$policyId", params: { policyId } })}
+        />
       )}
     </div>
   );
@@ -242,7 +275,26 @@ function StatCard({
   );
 }
 
-function AssetCard({ asset, vital, onPing }: { asset: Asset; vital?: Vital; onPing: () => void }) {
+const POLICY_STATUS_LABEL: Record<PolicyStatus, string> = {
+  active: "مؤمّن",
+  pending: "بانتظار الدفع",
+  expired: "منتهي",
+  cancelled: "ملغي",
+};
+
+function AssetCard({
+  asset,
+  vital,
+  policy,
+  onPing,
+  onInsure,
+}: {
+  asset: Asset;
+  vital?: Vital;
+  policy?: AssetPolicy;
+  onPing: () => void;
+  onInsure: () => void;
+}) {
   const Icon = TYPE_ICON[asset.type];
   return (
     <article className="rounded-2xl border border-border bg-surface p-5 shadow-premium">
@@ -259,9 +311,17 @@ function AssetCard({ asset, vital, onPing }: { asset: Asset; vital?: Vital; onPi
             </div>
           </div>
         </div>
-        <span className="rounded-full bg-teal/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-teal">
-          محمي
-        </span>
+        {policy && (policy.status === "active" || policy.status === "pending") ? (
+          <span
+            className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${policy.status === "active" ? "bg-teal/10 text-teal" : "bg-gold/10 text-gold"}`}
+          >
+            {POLICY_STATUS_LABEL[policy.status]} · {PLAN_INFO[policy.plan].name}
+          </span>
+        ) : (
+          <span className="rounded-full bg-bg-tertiary px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-text-tertiary">
+            غير مؤمّن
+          </span>
+        )}
       </div>
 
       <div className="mt-4 rounded-xl border border-border bg-bg-secondary p-3">
@@ -282,12 +342,22 @@ function AssetCard({ asset, vital, onPing }: { asset: Asset; vital?: Vital; onPi
         <Vitals icon={MapPin} label="موقع" value={vital?.lat ? "حيّ" : "—"} live={!!vital?.lat} />
       </div>
 
-      <button
-        onClick={onPing}
-        className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-bg-secondary px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-tertiary"
-      >
-        <Activity className="h-3.5 w-3.5" /> محاكاة نبضة (تجريبي)
-      </button>
+      <div className="mt-4 flex gap-2">
+        <button
+          onClick={onPing}
+          className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-border bg-bg-secondary px-3 py-2 text-xs font-medium text-text-secondary hover:bg-bg-tertiary"
+        >
+          <Activity className="h-3.5 w-3.5" /> محاكاة نبضة (تجريبي)
+        </button>
+        {(!policy || policy.status === "expired" || policy.status === "cancelled") && (
+          <button
+            onClick={onInsure}
+            className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-gold px-3 py-2 text-xs font-bold text-primary-foreground shadow-gold hover:opacity-95"
+          >
+            <Umbrella className="h-3.5 w-3.5" /> أمّن هذا الأصل
+          </button>
+        )}
+      </div>
     </article>
   );
 }
@@ -444,6 +514,101 @@ function AddAssetModal({
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+function InsureAssetModal({
+  asset,
+  userId,
+  onClose,
+  onCreated,
+}: {
+  asset: Asset;
+  userId: string;
+  onClose: () => void;
+  onCreated: (policyId: string) => void;
+}) {
+  const [plan, setPlan] = useState<PlanId>("raee");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async () => {
+    setSaving(true);
+    const info = PLAN_INFO[plan];
+    const { data, error } = await supabase
+      .from("policies")
+      .insert({
+        owner_id: userId,
+        asset_id: asset.id,
+        plan,
+        monthly_price: info.monthlyPrice,
+        coverage_amount: info.coverageAmount,
+      })
+      .select("id")
+      .single();
+    setSaving(false);
+    if (error || !data) {
+      toast.error(error?.message ?? "تعذّر إنشاء الوثيقة.");
+      return;
+    }
+    onCreated(data.id);
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-3xl border border-border bg-surface p-6 shadow-premium"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-xl font-black text-foreground">تأمين {asset.name}</h2>
+        <p className="mt-1 text-sm text-text-secondary">اختر الباقة المناسبة، ثم أكمل الدفع.</p>
+
+        <div className="mt-6 space-y-3">
+          {PLAN_IDS.map((id) => {
+            const info = PLAN_INFO[id];
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setPlan(id)}
+                className={`flex w-full items-center justify-between rounded-xl border px-4 py-3 text-right transition ${plan === id ? "border-gold bg-gold/10" : "border-border bg-bg-secondary"}`}
+              >
+                <div>
+                  <div className="text-sm font-bold text-foreground">{info.name}</div>
+                  <div className="text-xs text-text-tertiary">
+                    تغطية حتى {info.coverageAmount.toLocaleString("ar-SA")} ر.س
+                  </div>
+                </div>
+                <div className="text-sm font-black text-foreground">
+                  {info.monthlyPrice.toLocaleString("ar-SA")}{" "}
+                  <span className="text-xs font-medium text-text-tertiary">ر.س/شهر</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-bold text-foreground"
+          >
+            إلغاء
+          </button>
+          <button
+            type="button"
+            onClick={submit}
+            disabled={saving}
+            className="flex-1 rounded-xl bg-gradient-gold px-4 py-3 text-sm font-bold text-primary-foreground shadow-gold disabled:opacity-50"
+          >
+            {saving ? "جاري الإنشاء…" : "متابعة إلى الدفع"}
+          </button>
+        </div>
       </div>
     </div>
   );

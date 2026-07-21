@@ -1,35 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createClient } from "@supabase/supabase-js";
+import { requireUser } from "@/lib/require-user.server";
 
 type Msg = { role: "system" | "user" | "assistant"; content: string };
-
-async function requireUser(request: Request): Promise<Response | null> {
-  const authHeader = request.headers.get("authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  const token = authHeader.slice(7);
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) {
-    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  const sb = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data, error } = await sb.auth.getClaims(token);
-  if (error || !data?.claims?.sub) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { "content-type": "application/json" },
-    });
-  }
-  return null;
-}
 
 const SYSTEM_PROMPT = `أنت "وسام" — مساعد بيطري ذكي داخل تطبيق Right للتأمين على الأصول التراثية (خيل، إبل، صقور) في الخليج العربي.
 
@@ -50,8 +22,8 @@ export const Route = createFileRoute("/api/ai/chat")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const unauth = await requireUser(request);
-        if (unauth) return unauth;
+        const auth = await requireUser(request);
+        if (auth instanceof Response) return auth;
         const apiKey = process.env.LOVABLE_API_KEY;
         if (!apiKey) {
           return new Response(JSON.stringify({ error: "LOVABLE_API_KEY is not configured" }), {

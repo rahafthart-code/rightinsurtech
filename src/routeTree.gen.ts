@@ -16,8 +16,10 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssistantRouteImport } from './routes/assistant'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CheckoutPolicyIdRouteImport } from './routes/checkout.$policyId'
 import { Route as ApiReadinessRouteImport } from './routes/api/readiness'
 import { Route as ApiHealthRouteImport } from './routes/api/health'
+import { Route as ApiCheckoutPayRouteImport } from './routes/api/checkout.pay'
 import { Route as ApiAiChatRouteImport } from './routes/api/ai.chat'
 
 const VerifyRoute = VerifyRouteImport.update({
@@ -55,6 +57,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CheckoutPolicyIdRoute = CheckoutPolicyIdRouteImport.update({
+  id: '/checkout/$policyId',
+  path: '/checkout/$policyId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiReadinessRoute = ApiReadinessRouteImport.update({
   id: '/api/readiness',
   path: '/api/readiness',
@@ -63,6 +70,11 @@ const ApiReadinessRoute = ApiReadinessRouteImport.update({
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiCheckoutPayRoute = ApiCheckoutPayRouteImport.update({
+  id: '/api/checkout/pay',
+  path: '/api/checkout/pay',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAiChatRoute = ApiAiChatRouteImport.update({
@@ -81,7 +93,9 @@ export interface FileRoutesByFullPath {
   '/verify': typeof VerifyRoute
   '/api/health': typeof ApiHealthRoute
   '/api/readiness': typeof ApiReadinessRoute
+  '/checkout/$policyId': typeof CheckoutPolicyIdRoute
   '/api/ai/chat': typeof ApiAiChatRoute
+  '/api/checkout/pay': typeof ApiCheckoutPayRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -93,7 +107,9 @@ export interface FileRoutesByTo {
   '/verify': typeof VerifyRoute
   '/api/health': typeof ApiHealthRoute
   '/api/readiness': typeof ApiReadinessRoute
+  '/checkout/$policyId': typeof CheckoutPolicyIdRoute
   '/api/ai/chat': typeof ApiAiChatRoute
+  '/api/checkout/pay': typeof ApiCheckoutPayRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -106,7 +122,9 @@ export interface FileRoutesById {
   '/verify': typeof VerifyRoute
   '/api/health': typeof ApiHealthRoute
   '/api/readiness': typeof ApiReadinessRoute
+  '/checkout/$policyId': typeof CheckoutPolicyIdRoute
   '/api/ai/chat': typeof ApiAiChatRoute
+  '/api/checkout/pay': typeof ApiCheckoutPayRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -120,7 +138,9 @@ export interface FileRouteTypes {
     | '/verify'
     | '/api/health'
     | '/api/readiness'
+    | '/checkout/$policyId'
     | '/api/ai/chat'
+    | '/api/checkout/pay'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -132,7 +152,9 @@ export interface FileRouteTypes {
     | '/verify'
     | '/api/health'
     | '/api/readiness'
+    | '/checkout/$policyId'
     | '/api/ai/chat'
+    | '/api/checkout/pay'
   id:
     | '__root__'
     | '/'
@@ -144,7 +166,9 @@ export interface FileRouteTypes {
     | '/verify'
     | '/api/health'
     | '/api/readiness'
+    | '/checkout/$policyId'
     | '/api/ai/chat'
+    | '/api/checkout/pay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -157,7 +181,9 @@ export interface RootRouteChildren {
   VerifyRoute: typeof VerifyRoute
   ApiHealthRoute: typeof ApiHealthRoute
   ApiReadinessRoute: typeof ApiReadinessRoute
+  CheckoutPolicyIdRoute: typeof CheckoutPolicyIdRoute
   ApiAiChatRoute: typeof ApiAiChatRoute
+  ApiCheckoutPayRoute: typeof ApiCheckoutPayRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -211,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/$policyId': {
+      id: '/checkout/$policyId'
+      path: '/checkout/$policyId'
+      fullPath: '/checkout/$policyId'
+      preLoaderRoute: typeof CheckoutPolicyIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/readiness': {
       id: '/api/readiness'
       path: '/api/readiness'
@@ -223,6 +256,13 @@ declare module '@tanstack/react-router' {
       path: '/api/health'
       fullPath: '/api/health'
       preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/checkout/pay': {
+      id: '/api/checkout/pay'
+      path: '/api/checkout/pay'
+      fullPath: '/api/checkout/pay'
+      preLoaderRoute: typeof ApiCheckoutPayRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/ai/chat': {
@@ -245,7 +285,9 @@ const rootRouteChildren: RootRouteChildren = {
   VerifyRoute: VerifyRoute,
   ApiHealthRoute: ApiHealthRoute,
   ApiReadinessRoute: ApiReadinessRoute,
+  CheckoutPolicyIdRoute: CheckoutPolicyIdRoute,
   ApiAiChatRoute: ApiAiChatRoute,
+  ApiCheckoutPayRoute: ApiCheckoutPayRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
