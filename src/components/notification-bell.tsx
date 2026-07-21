@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { timeAgo } from "@/lib/time-ago";
 import { Bell, HeartPulse, ShieldCheck, FileText } from "lucide-react";
 
 type NotificationKind = "claim_status" | "policy_status" | "vital_alert";
@@ -18,17 +19,6 @@ const KIND_ICON: Record<NotificationKind, React.ElementType> = {
   policy_status: ShieldCheck,
   vital_alert: HeartPulse,
 };
-
-function timeAgo(iso: string) {
-  const seconds = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
-  if (seconds < 60) return "الآن";
-  const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `قبل ${minutes} د`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `قبل ${hours} س`;
-  const days = Math.floor(hours / 24);
-  return `قبل ${days} يوم`;
-}
 
 export function NotificationBell({ userId }: { userId: string }) {
   const [items, setItems] = useState<Notification[]>([]);
