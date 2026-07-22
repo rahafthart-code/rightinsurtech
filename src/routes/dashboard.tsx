@@ -14,6 +14,7 @@ import {
   type ClaimStatus,
   type PolicyStatus,
 } from "@/lib/labels";
+import { isOffline } from "@/lib/iot-watchdog-logic";
 import logo from "@/assets/right-logo.png";
 import {
   LogOut,
@@ -29,6 +30,7 @@ import {
   Umbrella,
   Loader2,
   FileText,
+  WifiOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -53,6 +55,7 @@ type Vital = {
   temperature: number | null;
   lat: number | null;
   lng: number | null;
+  battery_level: number | null;
   recorded_at: string;
 };
 
@@ -129,11 +132,26 @@ function Dashboard() {
     setClaims((data ?? []) as unknown as MyClaim[]);
   };
 
+  const loadVitals = async () => {
+    const { data } = await supabase
+      .from("vitals")
+      .select("asset_id, heart_rate, temperature, lat, lng, battery_level, recorded_at")
+      .order("recorded_at", { ascending: false });
+    if (!data) return;
+    const map: Record<string, Vital> = {};
+    for (const v of data) {
+      // Newest reading per asset wins (query is already newest-first).
+      if (!map[v.asset_id]) map[v.asset_id] = v as Vital;
+    }
+    setVitalsMap(map);
+  };
+
   useEffect(() => {
     if (!user) return;
     loadAssets();
     loadPolicies();
     loadClaims();
+    loadVitals();
 
     // Realtime: vitals
     const channel = supabase
@@ -407,6 +425,13 @@ function AssetCard({
         />
         <Vitals icon={MapPin} label="موقع" value={vital?.lat ? "حيّ" : "—"} live={!!vital?.lat} />
       </div>
+
+      {policy?.status === "active" && isOffline(vital?.recorded_at ?? null) && (
+        <div className="mt-3 flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-[11px] font-medium text-destructive">
+          <WifiOff className="h-3.5 w-3.5 shrink-0" />
+          جهاز المراقبة لم يُبلّغ منذ فترة — نراقب الوضع تلقائياً.
+        </div>
+      )}
 
       <div className="mt-4 flex gap-2">
         <button

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { timeAgo } from "@/lib/time-ago";
-import { Bell, HeartPulse, ShieldCheck, FileText } from "lucide-react";
+import { Bell, HeartPulse, ShieldCheck, FileText, WifiOff } from "lucide-react";
 
-type NotificationKind = "claim_status" | "policy_status" | "vital_alert";
+type NotificationKind = "claim_status" | "policy_status" | "vital_alert" | "device_offline";
 
 type Notification = {
   id: string;
@@ -18,6 +18,7 @@ const KIND_ICON: Record<NotificationKind, React.ElementType> = {
   claim_status: FileText,
   policy_status: ShieldCheck,
   vital_alert: HeartPulse,
+  device_offline: WifiOff,
 };
 
 export function NotificationBell({ userId }: { userId: string }) {

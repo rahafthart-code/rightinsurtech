@@ -11,6 +11,7 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { DangerAlertProvider } from "@/components/danger-alert-provider";
 import { logger } from "@/lib/logger";
 
 function NotFoundComponent() {
@@ -147,7 +148,9 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary>
-        <Outlet />
+        <DangerAlertProvider>
+          <Outlet />
+        </DangerAlertProvider>
       </ErrorBoundary>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>

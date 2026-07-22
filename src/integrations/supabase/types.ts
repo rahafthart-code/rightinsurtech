@@ -278,6 +278,7 @@ export type Database = {
       vitals: {
         Row: {
           asset_id: string
+          battery_level: number | null
           heart_rate: number | null
           id: number
           lat: number | null
@@ -288,6 +289,7 @@ export type Database = {
         }
         Insert: {
           asset_id: string
+          battery_level?: number | null
           heart_rate?: number | null
           id?: number
           lat?: number | null
@@ -298,6 +300,7 @@ export type Database = {
         }
         Update: {
           asset_id?: string
+          battery_level?: number | null
           heart_rate?: number | null
           id?: number
           lat?: number | null
@@ -325,13 +328,17 @@ export type Database = {
         Args: { _role: Database["public"]["Enums"]["app_role"] }
         Returns: boolean
       }
+      run_iot_watchdog: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin"
       asset_gender: "male" | "female"
       asset_type: "horse" | "camel" | "falcon"
       claim_status: "submitted" | "reviewing" | "approved" | "rejected" | "paid"
-      notification_kind: "claim_status" | "policy_status" | "vital_alert"
+      notification_kind: "claim_status" | "policy_status" | "vital_alert" | "device_offline"
       policy_plan: "hares" | "raee" | "amir"
       policy_status: "active" | "pending" | "expired" | "cancelled"
     }
@@ -465,7 +472,7 @@ export const Constants = {
       asset_gender: ["male", "female"],
       asset_type: ["horse", "camel", "falcon"],
       claim_status: ["submitted", "reviewing", "approved", "rejected", "paid"],
-      notification_kind: ["claim_status", "policy_status", "vital_alert"],
+      notification_kind: ["claim_status", "policy_status", "vital_alert", "device_offline"],
       policy_plan: ["hares", "raee", "amir"],
       policy_status: ["active", "pending", "expired", "cancelled"],
     },
