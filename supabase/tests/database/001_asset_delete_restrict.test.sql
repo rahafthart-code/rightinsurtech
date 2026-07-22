@@ -8,8 +8,7 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(4);
 
-select gen_random_uuid() as owner_id \gset
-insert into auth.users (id, email) values (:'owner_id', 'owner-001@rls-test.dev');
+select tests.create_supabase_user('owner-001@rls-test.dev') as owner_id \gset
 
 select gen_random_uuid() as insured_asset \gset
 select gen_random_uuid() as bare_asset \gset

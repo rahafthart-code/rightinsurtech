@@ -10,11 +10,8 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(7);
 
-select gen_random_uuid() as owner_a \gset
-select gen_random_uuid() as owner_b \gset
-insert into auth.users (id, email) values
-  (:'owner_a', 'roles-a@rls-test.dev'),
-  (:'owner_b', 'roles-b@rls-test.dev');
+select tests.create_supabase_user('roles-a@rls-test.dev') as owner_a \gset
+select tests.create_supabase_user('roles-b@rls-test.dev') as owner_b \gset
 
 select set_config(
   'request.jwt.claims',

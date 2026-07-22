@@ -7,15 +7,10 @@ create extension if not exists pgtap with schema extensions;
 
 select plan(12);
 
-select gen_random_uuid() as owner_a \gset
-select gen_random_uuid() as owner_b \gset
-select gen_random_uuid() as owner_c \gset
-select gen_random_uuid() as admin_id \gset
-insert into auth.users (id, email) values
-  (:'owner_a', 'p-owner-a@rls-test.dev'),
-  (:'owner_b', 'p-owner-b@rls-test.dev'),
-  (:'owner_c', 'p-owner-c@rls-test.dev'),
-  (:'admin_id', 'p-admin@rls-test.dev');
+select tests.create_supabase_user('p-owner-a@rls-test.dev') as owner_a \gset
+select tests.create_supabase_user('p-owner-b@rls-test.dev') as owner_b \gset
+select tests.create_supabase_user('p-owner-c@rls-test.dev') as owner_c \gset
+select tests.create_supabase_user('p-admin@rls-test.dev') as admin_id \gset
 insert into public.user_roles (user_id, role) values (:'admin_id', 'admin');
 
 select gen_random_uuid() as asset_a \gset
