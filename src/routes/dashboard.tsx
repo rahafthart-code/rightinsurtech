@@ -6,6 +6,14 @@ import { useIsAdmin } from "@/hooks/use-is-admin";
 import { NotificationBell } from "@/components/notification-bell";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PLAN_INFO, PLAN_IDS, type PlanId } from "@/lib/plans";
+import {
+  ASSET_TYPE_LABEL,
+  CLAIM_STATUS_LABEL,
+  POLICY_STATUS_LABEL,
+  type AssetType,
+  type ClaimStatus,
+  type PolicyStatus,
+} from "@/lib/labels";
 import logo from "@/assets/right-logo.png";
 import {
   LogOut,
@@ -20,6 +28,7 @@ import {
   ShieldCheck,
   Umbrella,
   Loader2,
+  FileText,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -30,7 +39,7 @@ export const Route = createFileRoute("/dashboard")({
 
 type Asset = {
   id: string;
-  type: "horse" | "camel" | "falcon";
+  type: AssetType;
   name: string;
   breed: string | null;
   estimated_value: number;
@@ -47,11 +56,20 @@ type Vital = {
   recorded_at: string;
 };
 
-type PolicyStatus = "active" | "pending" | "expired" | "cancelled";
 type AssetPolicy = { id: string; plan: PlanId; status: PolicyStatus };
 
-const TYPE_LABEL: Record<Asset["type"], string> = { horse: "خيل", camel: "إبل", falcon: "صقر" };
-const TYPE_ICON: Record<Asset["type"], React.ElementType> = {
+type MyClaim = {
+  id: string;
+  reason: string;
+  description: string | null;
+  amount_requested: number | null;
+  amount_approved: number | null;
+  status: ClaimStatus;
+  created_at: string;
+  assets: { name: string; type: AssetType } | null;
+};
+
+const TYPE_ICON: Record<AssetType, React.ElementType> = {
   horse: Crown,
   camel: Activity,
   falcon: Bird,
@@ -64,8 +82,10 @@ function Dashboard() {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [vitalsMap, setVitalsMap] = useState<Record<string, Vital>>({});
   const [policiesMap, setPoliciesMap] = useState<Record<string, AssetPolicy>>({});
+  const [claims, setClaims] = useState<MyClaim[]>([]);
   const [showAdd, setShowAdd] = useState(false);
   const [insureAsset, setInsureAsset] = useState<Asset | null>(null);
+  const [claimTarget, setClaimTarget] = useState<{ asset: Asset; policyId: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -99,10 +119,21 @@ function Dashboard() {
     setPoliciesMap(map);
   };
 
+  const loadClaims = async () => {
+    const { data } = await supabase
+      .from("claims")
+      .select(
+        "id, reason, description, amount_requested, amount_approved, status, created_at, assets(name, type)",
+      )
+      .order("created_at", { ascending: false });
+    setClaims((data ?? []) as unknown as MyClaim[]);
+  };
+
   useEffect(() => {
     if (!user) return;
     loadAssets();
     loadPolicies();
+    loadClaims();
 
     // Realtime: vitals
     const channel = supabase
@@ -234,11 +265,33 @@ function Dashboard() {
                   policy={policiesMap[a.id]}
                   onPing={() => simulateVital(a)}
                   onInsure={() => setInsureAsset(a)}
+                  onClaim={() => {
+                    const policy = policiesMap[a.id];
+                    if (policy) setClaimTarget({ asset: a, policyId: policy.id });
+                  }}
                 />
               ))}
             </div>
           )}
         </div>
+
+        {/* Claims */}
+        {!loading && (
+          <div className="mt-10">
+            <h2 className="text-lg font-bold text-foreground">
+              مطالباتي <span className="text-text-tertiary">({claims.length})</span>
+            </h2>
+            {claims.length === 0 ? (
+              <p className="mt-3 text-sm text-text-secondary">لا توجد مطالبات مقدَّمة بعد.</p>
+            ) : (
+              <div className="mt-4 space-y-3">
+                {claims.map((c) => (
+                  <MyClaimRow key={c.id} claim={c} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       {showAdd && (
@@ -251,6 +304,16 @@ function Dashboard() {
           userId={user.id}
           onClose={() => setInsureAsset(null)}
           onCreated={(policyId) => navigate({ to: "/checkout/$policyId", params: { policyId } })}
+        />
+      )}
+
+      {claimTarget && (
+        <ClaimModal
+          asset={claimTarget.asset}
+          policyId={claimTarget.policyId}
+          userId={user.id}
+          onClose={() => setClaimTarget(null)}
+          onSaved={loadClaims}
         />
       )}
     </div>
@@ -283,25 +346,20 @@ function StatCard({
   );
 }
 
-const POLICY_STATUS_LABEL: Record<PolicyStatus, string> = {
-  active: "مؤمّن",
-  pending: "بانتظار الدفع",
-  expired: "منتهي",
-  cancelled: "ملغي",
-};
-
 function AssetCard({
   asset,
   vital,
   policy,
   onPing,
   onInsure,
+  onClaim,
 }: {
   asset: Asset;
   vital?: Vital;
   policy?: AssetPolicy;
   onPing: () => void;
   onInsure: () => void;
+  onClaim: () => void;
 }) {
   const Icon = TYPE_ICON[asset.type];
   return (
@@ -314,7 +372,7 @@ function AssetCard({
           <div>
             <h3 className="text-lg font-bold text-foreground">{asset.name}</h3>
             <div className="text-xs text-text-tertiary">
-              {TYPE_LABEL[asset.type]}
+              {ASSET_TYPE_LABEL[asset.type]}
               {asset.breed ? ` · ${asset.breed}` : ""}
             </div>
           </div>
@@ -357,13 +415,22 @@ function AssetCard({
         >
           <Activity className="h-3.5 w-3.5" /> محاكاة نبضة (تجريبي)
         </button>
-        {(!policy || policy.status === "expired" || policy.status === "cancelled") && (
+        {policy?.status === "active" ? (
           <button
-            onClick={onInsure}
+            onClick={onClaim}
             className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-gold px-3 py-2 text-xs font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.97]"
           >
-            <Umbrella className="h-3.5 w-3.5" /> أمّن هذا الأصل
+            <FileText className="h-3.5 w-3.5" /> تقديم مطالبة
           </button>
+        ) : (
+          (!policy || policy.status === "expired" || policy.status === "cancelled") && (
+            <button
+              onClick={onInsure}
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-gradient-gold px-3 py-2 text-xs font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.97]"
+            >
+              <Umbrella className="h-3.5 w-3.5" /> أمّن هذا الأصل
+            </button>
+          )
         )}
       </div>
     </article>
@@ -391,6 +458,42 @@ function AssetCardSkeleton() {
       </div>
       <Skeleton className="mt-4 h-9 w-full rounded-lg" />
     </div>
+  );
+}
+
+function MyClaimRow({ claim }: { claim: MyClaim }) {
+  return (
+    <article className="rounded-2xl border border-border bg-surface p-4 shadow-premium">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="text-sm font-bold text-foreground">
+            {claim.assets
+              ? `${ASSET_TYPE_LABEL[claim.assets.type]} · ${claim.assets.name}`
+              : "أصل محذوف"}
+          </div>
+          <div className="mt-1 text-xs text-text-tertiary">{claim.reason}</div>
+          {claim.description && (
+            <p className="mt-2 max-w-xl text-xs text-text-secondary">{claim.description}</p>
+          )}
+        </div>
+        <span className="rounded-full bg-teal/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-teal">
+          {CLAIM_STATUS_LABEL[claim.status]}
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-4 border-t border-border pt-3 text-[11px] text-text-tertiary">
+        <span>
+          المبلغ المطلوب:{" "}
+          {claim.amount_requested != null
+            ? `${Number(claim.amount_requested).toLocaleString("ar-SA")} ر.س`
+            : "—"}
+        </span>
+        {claim.amount_approved != null && (
+          <span className="font-bold text-gold">
+            المبلغ المعتمد: {Number(claim.amount_approved).toLocaleString("ar-SA")} ر.س
+          </span>
+        )}
+      </div>
+    </article>
   );
 }
 
@@ -494,7 +597,7 @@ function AddAssetModal({
                   onClick={() => setType(t)}
                   className={`rounded-xl border px-3 py-3 text-sm font-bold transition ${type === t ? "border-gold bg-gold/10 text-foreground" : "border-border bg-bg-secondary text-text-secondary"}`}
                 >
-                  {TYPE_LABEL[t]}
+                  {ASSET_TYPE_LABEL[t]}
                 </button>
               ))}
             </div>
@@ -641,6 +744,117 @@ function InsureAssetModal({
             {saving ? "جاري الإنشاء…" : "متابعة إلى الدفع"}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+const CLAIM_REASONS = ["مرض", "إصابة", "وفاة", "سرقة", "أخرى"];
+
+function ClaimModal({
+  asset,
+  policyId,
+  userId,
+  onClose,
+  onSaved,
+}: {
+  asset: Asset;
+  policyId: string;
+  userId: string;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [reason, setReason] = useState(CLAIM_REASONS[0]);
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    const { error } = await supabase.from("claims").insert({
+      owner_id: userId,
+      policy_id: policyId,
+      asset_id: asset.id,
+      reason,
+      description: description.trim() || null,
+      amount_requested: amount ? Number(amount) : null,
+    });
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("تم إرسال المطالبة");
+    onSaved();
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-3xl border border-border bg-surface p-6 shadow-premium"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-xl font-black text-foreground">تقديم مطالبة — {asset.name}</h2>
+        <p className="mt-1 text-sm text-text-secondary">صف الحالة وسنراجعها في أقرب وقت.</p>
+
+        <form onSubmit={submit} className="mt-6 space-y-4">
+          <Field label="سبب المطالبة" required>
+            <select
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              className="w-full rounded-lg border border-border bg-bg-secondary px-3 py-2.5 text-foreground outline-none focus:border-gold focus:ring-2 focus:ring-gold/20"
+            >
+              {CLAIM_REASONS.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label="تفاصيل إضافية">
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+              className="w-full rounded-lg border border-border bg-bg-secondary px-3 py-2.5 text-foreground outline-none focus:border-gold focus:ring-2 focus:ring-gold/20"
+              placeholder="اشرح ما حدث..."
+            />
+          </Field>
+
+          <Field label="المبلغ المطلوب (ر.س)">
+            <input
+              dir="ltr"
+              inputMode="numeric"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))}
+              className="w-full rounded-lg border border-border bg-bg-secondary px-3 py-2.5 text-right font-mono text-foreground outline-none focus:border-gold focus:ring-2 focus:ring-gold/20"
+              placeholder="0"
+            />
+          </Field>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-bold text-foreground"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 rounded-xl bg-gradient-gold px-4 py-3 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
+            >
+              {saving ? "جاري الإرسال…" : "إرسال المطالبة"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

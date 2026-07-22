@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { PLAN_INFO, type PlanId } from "@/lib/plans";
+import { ASSET_TYPE_LABEL, type AssetType, type PolicyStatus } from "@/lib/labels";
 import logo from "@/assets/right-logo.png";
 import { CheckCircle2, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -12,15 +13,12 @@ export const Route = createFileRoute("/checkout/$policyId")({
   head: () => ({ meta: [{ title: "الدفع — Right" }] }),
 });
 
-type AssetType = "horse" | "camel" | "falcon";
-const ASSET_TYPE_LABEL: Record<AssetType, string> = { horse: "خيل", camel: "إبل", falcon: "صقر" };
-
 type PolicyRow = {
   id: string;
   plan: PlanId;
   monthly_price: number;
   coverage_amount: number;
-  status: "active" | "pending" | "expired" | "cancelled";
+  status: PolicyStatus;
   assets: { name: string; type: AssetType } | null;
 };
 

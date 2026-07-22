@@ -4,6 +4,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  ASSET_TYPE_LABEL,
+  CLAIM_STATUS_LABEL,
+  POLICY_STATUS_LABEL,
+  type AssetType,
+  type ClaimStatus,
+  type PolicyStatus,
+} from "@/lib/labels";
+import { PLAN_INFO } from "@/lib/plans";
 import logo from "@/assets/right-logo.png";
 import { LogOut, ShieldCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -12,10 +21,6 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
   head: () => ({ meta: [{ title: "لوحة الإدارة — Right" }] }),
 });
-
-type ClaimStatus = "submitted" | "reviewing" | "approved" | "rejected" | "paid";
-type PolicyStatus = "active" | "pending" | "expired" | "cancelled";
-type AssetType = "horse" | "camel" | "falcon";
 
 type Claim = {
   id: string;
@@ -44,23 +49,8 @@ type Policy = {
   assets: { name: string; type: AssetType } | null;
 };
 
-const ASSET_TYPE_LABEL: Record<AssetType, string> = { horse: "خيل", camel: "إبل", falcon: "صقر" };
-const PLAN_LABEL: Record<Policy["plan"], string> = { hares: "حارس", raee: "راعي", amir: "أمير" };
 const CLAIM_STATUSES: ClaimStatus[] = ["submitted", "reviewing", "approved", "rejected", "paid"];
 const POLICY_STATUSES: PolicyStatus[] = ["active", "pending", "expired", "cancelled"];
-const CLAIM_STATUS_LABEL: Record<ClaimStatus, string> = {
-  submitted: "مُقدَّمة",
-  reviewing: "قيد المراجعة",
-  approved: "موافَق عليها",
-  rejected: "مرفوضة",
-  paid: "مصروفة",
-};
-const POLICY_STATUS_LABEL: Record<PolicyStatus, string> = {
-  active: "سارية",
-  pending: "بانتظار التفعيل",
-  expired: "منتهية",
-  cancelled: "ملغاة",
-};
 
 function AdminPage() {
   const { user, loading: authLoading } = useAuth();
@@ -338,8 +328,8 @@ function PolicyRow({ policy, onSaved }: { policy: Policy; onSaved: () => void })
               : "أصل محذوف"}
           </div>
           <div className="mt-1 text-xs text-text-tertiary">
-            باقة {PLAN_LABEL[policy.plan]} · {Number(policy.monthly_price).toLocaleString("ar-SA")}{" "}
-            ر.س/شهرياً
+            باقة {PLAN_INFO[policy.plan].name} ·{" "}
+            {Number(policy.monthly_price).toLocaleString("ar-SA")} ر.س/شهرياً
           </div>
           <div className="mt-2 text-[11px] text-text-tertiary">
             تغطية حتى {Number(policy.coverage_amount).toLocaleString("ar-SA")} ر.س
