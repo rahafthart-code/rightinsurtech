@@ -12,6 +12,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:rls": "supabase test db",
     "deploy": "vite build && wrangler deploy"
   },
   "dependencies": {
