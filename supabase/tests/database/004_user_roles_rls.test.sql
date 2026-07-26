@@ -75,18 +75,26 @@ reset role;
 insert into public.user_roles (user_id, role) values (:'owner_a', 'admin');
 set local role authenticated;
 
+-- A data-modifying CTE (WITH ... UPDATE/DELETE ... RETURNING) can only
+-- appear as a top-level statement in Postgres — it can't be nested as a
+-- subquery inside is()'s argument list, so run it standalone and \gset
+-- the result instead.
+with attempt as (
+  update public.user_roles set role = 'admin' where user_id = :'owner_a' returning 1
+) select count(*) as update_attempt_count from attempt \gset
+
 select is(
-  (with attempt as (
-    update public.user_roles set role = 'admin' where user_id = :'owner_a' returning 1
-  ) select count(*) from attempt)::int,
+  :update_attempt_count::int,
   0,
   'a user cannot update their own role row — no UPDATE policy exists for this table at all'
 );
 
+with attempt as (
+  delete from public.user_roles where user_id = :'owner_a' returning 1
+) select count(*) as delete_attempt_count from attempt \gset
+
 select is(
-  (with attempt as (
-    delete from public.user_roles where user_id = :'owner_a' returning 1
-  ) select count(*) from attempt)::int,
+  :delete_attempt_count::int,
   0,
   'a user cannot delete their own role row either'
 );
