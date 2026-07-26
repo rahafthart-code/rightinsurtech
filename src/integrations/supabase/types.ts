@@ -170,6 +170,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
           phone: string | null
@@ -178,6 +179,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id: string
           phone?: string | null
@@ -186,6 +188,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
@@ -197,36 +200,42 @@ export type Database = {
         Row: {
           body: string | null
           created_at: string
+          email_sent_at: string | null
           id: string
           kind: Database["public"]["Enums"]["notification_kind"]
           read_at: string | null
           related_asset_id: string | null
           related_claim_id: string | null
           related_policy_id: string | null
+          sms_sent_at: string | null
           title: string
           user_id: string
         }
         Insert: {
           body?: string | null
           created_at?: string
+          email_sent_at?: string | null
           id?: string
           kind: Database["public"]["Enums"]["notification_kind"]
           read_at?: string | null
           related_asset_id?: string | null
           related_claim_id?: string | null
           related_policy_id?: string | null
+          sms_sent_at?: string | null
           title: string
           user_id: string
         }
         Update: {
           body?: string | null
           created_at?: string
+          email_sent_at?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["notification_kind"]
           read_at?: string | null
           related_asset_id?: string | null
           related_claim_id?: string | null
           related_policy_id?: string | null
+          sms_sent_at?: string | null
           title?: string
           user_id?: string
         }

@@ -31,6 +31,7 @@ import {
   Loader2,
   FileText,
   WifiOff,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -89,6 +90,8 @@ function Dashboard() {
   const [showAdd, setShowAdd] = useState(false);
   const [insureAsset, setInsureAsset] = useState<Asset | null>(null);
   const [claimTarget, setClaimTarget] = useState<{ asset: Asset; policyId: string } | null>(null);
+  const [profileEmail, setProfileEmail] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -147,12 +150,18 @@ function Dashboard() {
     setVitalsMap(map);
   };
 
+  const loadProfile = async (userId: string) => {
+    const { data } = await supabase.from("profiles").select("email").eq("id", userId).maybeSingle();
+    setProfileEmail(data?.email ?? null);
+  };
+
   useEffect(() => {
     if (!user) return;
     loadAssets();
     loadPolicies();
     loadClaims();
     loadVitals();
+    loadProfile(user.id);
 
     // Realtime: vitals
     const channel = supabase
@@ -224,6 +233,13 @@ function Dashboard() {
               {user.phone ?? user.email}
             </span>
             <NotificationBell userId={user.id} />
+            <button
+              onClick={() => setShowSettings(true)}
+              className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground hover:bg-bg-tertiary"
+              aria-label="الإعدادات"
+            >
+              <Settings className="h-4 w-4" />
+            </button>
             <button
               onClick={logout}
               className="inline-flex items-center gap-2 rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground hover:bg-bg-tertiary"
@@ -333,6 +349,15 @@ function Dashboard() {
           userId={user.id}
           onClose={() => setClaimTarget(null)}
           onSaved={loadClaims}
+        />
+      )}
+
+      {showSettings && (
+        <SettingsModal
+          userId={user.id}
+          currentEmail={profileEmail}
+          onClose={() => setShowSettings(false)}
+          onSaved={setProfileEmail}
         />
       )}
     </div>
@@ -884,6 +909,86 @@ function ClaimModal({
               className="flex-1 rounded-xl bg-gradient-gold px-4 py-3 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
             >
               {saving ? "جاري الإرسال…" : "إرسال المطالبة"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function SettingsModal({
+  userId,
+  currentEmail,
+  onClose,
+  onSaved,
+}: {
+  userId: string;
+  currentEmail: string | null;
+  onClose: () => void;
+  onSaved: (email: string | null) => void;
+}) {
+  const [email, setEmail] = useState(currentEmail ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    const trimmed = email.trim();
+    const { error } = await supabase
+      .from("profiles")
+      .update({ email: trimmed || null })
+      .eq("id", userId);
+    setSaving(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("تم حفظ الإعدادات");
+    onSaved(trimmed || null);
+    onClose();
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md rounded-3xl border border-border bg-surface p-6 shadow-premium"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-xl font-black text-foreground">الإعدادات</h2>
+        <p className="mt-1 text-sm text-text-secondary">
+          أضف بريدك الإلكتروني لتصلك نسخة من الإشعارات المهمة عبره أيضاً.
+        </p>
+
+        <form onSubmit={submit} className="mt-6 space-y-4">
+          <Field label="البريد الإلكتروني (اختياري)">
+            <input
+              dir="ltr"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full rounded-lg border border-border bg-bg-secondary px-3 py-2.5 text-left text-foreground outline-none focus:border-gold focus:ring-2 focus:ring-gold/20"
+              placeholder="you@example.com"
+            />
+          </Field>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-bold text-foreground"
+            >
+              إلغاء
+            </button>
+            <button
+              type="submit"
+              disabled={saving}
+              className="flex-1 rounded-xl bg-gradient-gold px-4 py-3 text-sm font-bold text-primary-foreground shadow-gold transition hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
+            >
+              {saving ? "جاري الحفظ…" : "حفظ"}
             </button>
           </div>
         </form>
