@@ -333,6 +333,9 @@ function PolicyRow({ policy, onSaved }: { policy: Policy; onSaved: () => void })
           </div>
           <div className="mt-2 text-[11px] text-text-tertiary">
             تغطية حتى {Number(policy.coverage_amount).toLocaleString("ar-SA")} ر.س
+            {policy.end_date && (
+              <> · تنتهي في {new Date(policy.end_date).toLocaleDateString("ar-SA")}</>
+            )}
           </div>
         </div>
         <span className="rounded-full bg-teal/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-teal">

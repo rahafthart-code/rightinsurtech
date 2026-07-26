@@ -332,6 +332,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      run_policy_expiry_check: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin"

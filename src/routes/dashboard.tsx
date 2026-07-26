@@ -59,7 +59,7 @@ type Vital = {
   recorded_at: string;
 };
 
-type AssetPolicy = { id: string; plan: PlanId; status: PolicyStatus };
+type AssetPolicy = { id: string; plan: PlanId; status: PolicyStatus; end_date: string | null };
 
 type MyClaim = {
   id: string;
@@ -111,13 +111,14 @@ function Dashboard() {
   const loadPolicies = async () => {
     const { data, error } = await supabase
       .from("policies")
-      .select("id, asset_id, plan, status")
+      .select("id, asset_id, plan, status, end_date")
       .order("created_at", { ascending: false });
     if (error) return;
     const map: Record<string, AssetPolicy> = {};
     for (const p of data ?? []) {
       // Newest policy per asset wins (query is already newest-first).
-      if (!map[p.asset_id]) map[p.asset_id] = { id: p.id, plan: p.plan, status: p.status };
+      if (!map[p.asset_id])
+        map[p.asset_id] = { id: p.id, plan: p.plan, status: p.status, end_date: p.end_date };
     }
     setPoliciesMap(map);
   };
@@ -407,6 +408,12 @@ function AssetCard({
           </span>
         )}
       </div>
+
+      {policy?.status === "active" && policy.end_date && (
+        <div className="mt-2 text-[11px] text-text-tertiary">
+          تنتهي الوثيقة في {new Date(policy.end_date).toLocaleDateString("ar-SA")}
+        </div>
+      )}
 
       <div className="mt-4 rounded-xl border border-border bg-bg-secondary p-3">
         <div className="text-[11px] text-text-tertiary">القيمة المؤمّن عليها</div>

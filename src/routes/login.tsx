@@ -85,13 +85,13 @@ function LoginPage() {
 
               <p className="text-center text-xs text-text-tertiary">
                 بمتابعتك توافق على{" "}
-                <a href="#" className="text-foreground underline">
+                <Link to="/terms" className="text-foreground underline">
                   الشروط
-                </a>{" "}
+                </Link>{" "}
                 و
-                <a href="#" className="text-foreground underline">
+                <Link to="/privacy" className="text-foreground underline">
                   سياسة الخصوصية
-                </a>
+                </Link>
                 .
               </p>
             </form>
