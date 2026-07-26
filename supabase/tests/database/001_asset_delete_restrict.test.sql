@@ -6,6 +6,41 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
+-- `supabase test db` does not run supabase/seed.sql before executing
+-- these files (only `supabase db reset` does), so the auth.users test
+-- helper has to be self-contained in each file instead. Real
+-- auth.users has several NOT NULL columns with no safe default in every
+-- schema version — inserting just (id, email) fails outright. No real
+-- password is set since these tests simulate the session directly via
+-- request.jwt.claims and never do a real login.
+create schema if not exists tests;
+create or replace function tests.create_supabase_user(user_email text, user_id uuid default gen_random_uuid())
+returns uuid
+language plpgsql
+security definer
+set search_path = auth, public, pg_temp
+as $$
+begin
+  insert into auth.users (
+    instance_id, id, aud, role, email, encrypted_password,
+    email_confirmed_at, recovery_sent_at, last_sign_in_at,
+    raw_app_meta_data, raw_user_meta_data,
+    created_at, updated_at,
+    confirmation_token, email_change, email_change_token_new, recovery_token
+  ) values (
+    '00000000-0000-0000-0000-000000000000', user_id, 'authenticated', 'authenticated',
+    user_email, 'not-a-real-password-rls-tests-never-check-this',
+    now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb, '{}'::jsonb,
+    now(), now(),
+    '', '', '', ''
+  )
+  on conflict (id) do nothing;
+
+  return user_id;
+end;
+$$;
+
 select plan(4);
 
 select tests.create_supabase_user('owner-001@rls-test.dev') as owner_id \gset
